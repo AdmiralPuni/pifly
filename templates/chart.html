@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static',filename='bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css">
+    <title>Panopticoin Graph</title>
+    <style>
+        #text-battery, #text-water{
+            min-width: 60px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+    <div class="container-fluid p-3">
+        <span class="display-4 fw-bold py-2 d-block text-white">Panopticoin</span>
+        <div class="row" id="chart-show">
+            <div class="col-6 bg-white py-3 px-2" id="A">
+                <div class="card">
+                    <div class="card-header text-white bg-primary" id="device-name">
+                        Device A
+                    </div>
+                    <div class="card-body pt-0">
+                        <span class="d-block fs-4"><i class="bi bi-battery fs-3"></i> Battery</span>
+                        <div class="d-flex">
+                            <div class="bg-dark text-white rounded-start flex fs-5 px-2" id="text-battery">44%</div>
+                            <div class="flex-fill">
+                                <div class="progress rounded-0 rounded-end" style="height: 32px;">
+                                    <div class="progress-bar" id="level-battery" role="progressbar" style="width: 44%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="d-block fs-4"><i class="bi bi-water fs-3"></i> Water Level</span>
+                        <div class="d-flex">
+                            <div class="bg-dark text-white rounded-start flex fs-5 px-2" id="text-water">33%</div>
+                            <div class="flex-fill">
+                                <div class="progress rounded-0 rounded-end" style="height: 32px;">
+                                    <div class="progress-bar" role="progressbar" id="level-water" style="width: 33%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 bg-white py-3 px-2" id="B">
+                <div class="card">
+                    <div class="card-header text-white bg-primary" id="device-name">
+                        Device A
+                    </div>
+                    <div class="card-body pt-0">
+                        <span class="d-block fs-4"><i class="bi bi-battery fs-3"></i> Battery</span>
+                        <div class="d-flex">
+                            <div class="bg-dark text-white rounded-start flex fs-5 px-2" id="text-battery">44%</div>
+                            <div class="flex-fill">
+                                <div class="progress rounded-0 rounded-end" style="height: 32px;">
+                                    <div class="progress-bar" id="level-battery" role="progressbar" style="width: 44%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="d-block fs-4"><i class="bi bi-water fs-3"></i> Water Level</span>
+                        <div class="d-flex">
+                            <div class="bg-dark text-white rounded-start flex fs-5 px-2" id="text-water">33%</div>
+                            <div class="flex-fill">
+                                <div class="progress rounded-0 rounded-end" style="height: 32px;">
+                                    <div class="progress-bar" role="progressbar" id="level-water" style="width: 33%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 bg-white py-3 px-2" id="C">
+                <div class="card">
+                    <div class="card-header text-white bg-primary" id="device-name">
+                        Device A
+                    </div>
+                    <div class="card-body pt-0">
+                        <span class="d-block fs-4"><i class="bi bi-battery fs-3"></i> Battery</span>
+                        <div class="d-flex">
+                            <div class="bg-dark text-white rounded-start flex fs-5 px-2" id="text-battery">44%</div>
+                            <div class="flex-fill">
+                                <div class="progress rounded-0 rounded-end" style="height: 32px;">
+                                    <div class="progress-bar" id="level-battery" role="progressbar" style="width: 44%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="d-block fs-4"><i class="bi bi-water fs-3"></i> Water Level</span>
+                        <div class="d-flex">
+                            <div class="bg-dark text-white rounded-start flex fs-5 px-2" id="text-water">33%</div>
+                            <div class="flex-fill">
+                                <div class="progress rounded-0 rounded-end" style="height: 32px;">
+                                    <div class="progress-bar" role="progressbar" id="level-water" style="width: 33%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+<script src="{{ url_for('static',filename='jquery.min.js') }}"></script>
+<script src="{{ url_for('static',filename='chart.js') }}"></script>
+<script>
+    symbol_list = ['A', 'B', 'C'];
+
+    function load_data(){
+        $.each(symbol_list, function (i, item) {
+            $.getJSON('http://192.168.0.15:5000/data', function (data) {
+                $.each(data, function (i, item) {
+                    //$("#" + item[0]).html('BATTERY : ' + item[1] + ' | WATER LEVEL : ' + item[2] + ' | OCCUPIED : ' + item[3])
+                    $("#" + item[0]).children( ".card" ).children( ".card-body" ).children( ".d-flex" ).children( "#text-battery" ).html(item[1] + '%')
+                    $("#" + item[0]).children( ".card" ).children( ".card-body" ).children( ".d-flex" ).children(".flex-fill").children('.progress').children( "#level-battery" ).css('width', item[1] + '%')
+                    colored_bar(item[0], item[1], 'battery')
+                    $("#" + item[0]).children( ".card" ).children( ".card-body" ).children( ".d-flex" ).children( "#text-water" ).html(item[2] + '%')
+                    $("#" + item[0]).children( ".card" ).children( ".card-body" ).children( ".d-flex" ).children(".flex-fill").children('.progress').children( "#level-water" ).css('width', item[2] + '%')
+                    colored_bar(item[0], item[2], 'water')
+                    $("#" + item[0]).children( ".card" ).children( "#device-name" ).html('DEVICE ' +item[0])
+                });
+            });
+        });
+    }
+    
+    function colored_bar(id, value, type){
+        color = 'blue'
+        if(value < 21){
+            color = 'red'
+        }
+        else if(value < 51){
+            color = 'yellow'
+        }
+        else if(value < 101){
+            color = 'blue'
+        }
+        if(type == 'battery'){
+            $("#" + id).children( ".card" ).children( ".card-body" ).children( ".d-flex" ).children(".flex-fill").children('.progress').children( "#level-battery" ).css('background-color', color)
+        }
+        else if(type == 'water'){
+            $("#" + id).children( ".card" ).children( ".card-body" ).children( ".d-flex" ).children(".flex-fill").children('.progress').children( "#level-water" ).css('background-color', color)
+        }
+        
+    }
+
+    //for every 10 minute run the load_data function
+    setInterval(function () {
+        load_data();
+        //console.log('data loaded ' + new Date());
+    }, 1 * 1000);
+</script>
+
+</html>
