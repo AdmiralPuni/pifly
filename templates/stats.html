@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static',filename='bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css">
+    <title>Noflies</title>
+    <style>
+        .fly-text {
+            min-width: 60px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="bg-secondary">
+    <div class="container-fluid" style="min-height: 100vh;">
+        <div class="row h-100" style="min-height: 100vh;">
+            <div class="col-2 col-md-2 px-0">
+                <div class="d-flex sticky-top flex-column flex-shrink-0 p-1 p-md-3 text-white bg-dark"style="min-height: 100vh;">
+                    <a class="nav-link-light d-block btn btn-outline-light fs-3 border-0 my-0" href="">
+                        <i class="bi bi-wind"></i> <span class="d-none d-md-inline">Noflies</span>
+                    </a>
+                    <hr>
+                    <a class="nav-link-light d-block btn btn-outline-light fs-5 text-center text-md-start border-0 my-1" href="">
+                        <i class="bi bi-house"></i> <span class="d-none d-md-inline">Dashboard</span>
+                    </a>
+                    <a class="nav-link-light d-block btn btn-outline-light fs-5 text-center text-md-start border-0 my-1" href="">
+                        <i class="bi bi-gear"></i> <span class="d-none d-md-inline">Settings</span>
+                    </a>
+                    <a class="nav-link-light d-block btn btn-outline-light fs-5 text-center text-md-start border-0 my-1" href="">
+                        <i class="bi bi-folder"></i> <span class="d-none d-md-inline">Pages</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-10 col-md-10 bg-light px-0">
+                <div class="d-block bg-primary sticky-top py-3 text-end px-3 text-white">
+                    SATGAS TEAM
+                </div>
+                <div class="container-fluid">
+                    <span class="display-6 d-block mt-3">Dashboard</span>
+                    <hr class="my-1">
+                    <div class="row" id="stats-show">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="{{ url_for('static',filename='jquery.min.js') }}"></script>
+<script src="{{ url_for('static',filename='chart.js') }}"></script>
+<script>
+    function init_columns(){
+        console.log('Initiating columns')
+        $.getJSON("{{ url_for('data') }}", function (data) {
+            $.each(data, function (i, item) {
+                $("#stats-show").append(`
+                    <div class="col-12 col-md-6 py-3 px-2" id="` + item[0] + `">
+                        <div class="card bg-white border-0 shadow">
+                            <div class="card-header text-white bg-primary" id="device-name">
+                                <div class="d-flex fs-5 fw-bold">
+                                    <span class="flex-fill" id="C-device-name">DEVICE ` + item[0] + `</span>
+                                    <span class="flex-fill text-end" id="` + item[0] + `-table-status">OCCUPIED</span>
+                                </div>
+                            </div>
+                            <div class="card-body pt-0">
+                                <div class="row g-2 py-2">
+                                    <div class="col-12 col-md-6">
+                                        <div class="border px-2 py-1">
+                                            <span class="d-block fs-4"><i class="bi bi-battery fs-3"></i> Battery</span>
+                                            <div class="d-flex">
+                                                <div class="bg-dark text-white rounded-start flex fs-5 px-2 fly-text" id="` + item[0] + `-text-battery">
+                                                    44%
+                                                </div>
+                                                <div class="flex-fill">
+                                                    <div class="progress rounded-0 rounded-end" style="height: 32px;">
+                                                        <div class="progress-bar" id="` + item[0] + `-level-battery" role="progressbar"
+                                                            style="width: 44%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="border px-2 py-1">
+                                            <span class="d-block fs-4"><i class="bi bi-clock fs-3"></i> Interval</span>
+                                            <select class="form-control w-100" style="height: 32px;border:0; border-bottom:2px solid blue;border-radius:0;">
+                                                <option>1 Minute</option>
+                                                <option>2 Minute</option>
+                                                <option>3 Minute</option>
+                                                <option>4 Minute</option>
+                                                <option selected="">5 Minute</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="border px-2 py-1">
+                                            <span class="d-block fs-4"><i class="bi bi-water fs-3"></i> Water Level</span>
+                                            <div class="d-flex">
+                                                <div class="bg-dark text-white rounded-start flex fs-5 px-2 fly-text" id="` + item[0] + `-text-water">
+                                                    44%
+                                                </div>
+                                                <div class="flex-fill">
+                                                    <div class="progress rounded-0 rounded-end" style="height: 32px;">
+                                                        <div class="progress-bar" id="` + item[0] + `-level-water" role="progressbar"
+                                                            style="width: 44%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `)
+            });
+        });
+    }
+
+    init_columns();
+
+    function load_data() {
+        $.getJSON("{{ url_for('data') }}", function (data) {
+            $.each(data, function (i, item) {
+                //$("#" + item[0]).html('BATTERY : ' + item[1] + ' | WATER LEVEL : ' + item[2] + ' | OCCUPIED : ' + item[3])
+                $("#" + item[0] + "-text-battery").html(Math.round(item[1]) + '%')
+                $("#" + item[0] + "-level-battery").css('width', item[1] + '%')
+                colored_bar(item[0], item[1],'battery')
+                $("#" + item[0] + "-text-water").html(Math.round(item[2]) + '%')
+                $("#" + item[0] + "-level-water").css('width', item[2] + '%')
+                colored_bar(item[0], item[2],'water')
+            });
+        });
+    }
+
+    function colored_bar(id, value, type) {
+        color = 'blue'
+        if (value <= 20) {
+            color = 'red'
+        }
+        else if (value <= 50) {
+            color = 'yellow'
+        }
+        else if (value <= 100) {
+            color = 'blue'
+        }
+        if (type == 'battery') {
+            $("#" + id + "-level-battery").css('background-color', color)
+        }
+        else if (type == 'water') {
+            $("#" + id + "-level-water").css('background-color', color)
+        }
+    }
+
+    setInterval(function () {
+        load_data();
+    }, 1 * 1000);
+</script>
+
+</html>

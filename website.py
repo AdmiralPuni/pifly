@@ -12,7 +12,7 @@ def home():
 
 @APP.route('/stats')
 def stats():
-  return flask.render_template('chart.html')
+  return flask.render_template('stats.html')
 
 @APP.route('/devices')
 def coindata():
@@ -25,4 +25,4 @@ def data():
   return json.dumps(data)
 
 if __name__ == '__main__':
-  APP.run(debug=True)
+  APP.run(debug=True, host="0.0.0.0")
