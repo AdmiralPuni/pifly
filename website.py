@@ -19,6 +19,18 @@ def coindata():
   data = sql.select_device_id()
   return json.dumps(data)
 
+@APP.route('/device/add', methods=['POST'])
+def add_device():
+  data = flask.request.form['device-id']
+  sql.insert_new_device(data)
+  return 'OK'
+
+@APP.route('/device/remove', methods=['GET'])
+def remove_device():
+  data = flask.request.args['id']
+  sql.delete_device(data)
+  return 'OK'
+
 @APP.route('/data')
 def data():
   data = sql.select_all_device()

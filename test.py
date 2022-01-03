@@ -3,7 +3,7 @@ import random
 from time import sleep
 
 def publish(client, topic, payload):
-    client.publish(topic, payload)
+    client.publish(topic, payload, qos=0)
 
 client = mqtt.Client()
 client.publish("A-battery", "20")
@@ -34,4 +34,4 @@ while True:
     if current_water[i] == 0:
       current_water[i] = max_water_value[i]
 
-  sleep(1)
+  sleep(0.1)

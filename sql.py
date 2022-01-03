@@ -47,6 +47,12 @@ def insert_new_device(id):
   connection_cursor = connection.cursor()
   connection_cursor.execute("INSERT INTO devices VALUES (?, ?, ?, ?)", (id, '', '', 0))
   connection_cursor.close()
+  #connection.commit()
+
+def delete_device(id):
+  connection_cursor = connection.cursor()
+  connection_cursor.execute("DELETE FROM devices WHERE id=?", (id,))
+  connection_cursor.close()
 
 def select_device_id():
   connection_cursor = connection.cursor()
