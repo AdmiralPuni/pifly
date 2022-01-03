@@ -16,6 +16,7 @@ def create_table():
     id TEXT PRIMARY KEY,
     battery TEXT,
     water_level TEXT,
+    radar INTEGER,
     occupied INTEGER
   )
   """)
@@ -45,9 +46,9 @@ def select_single_device(id):
 
 def insert_new_device(id):
   connection_cursor = connection.cursor()
-  connection_cursor.execute("INSERT INTO devices VALUES (?, ?, ?, ?)", (id, '', '', 0))
+  connection_cursor.execute("INSERT INTO devices VALUES (?, ?, ?, ?, ?)", (id, '', '', 0, 0))
   connection_cursor.close()
-  #connection.commit()
+  connection.commit()
 
 def delete_device(id):
   connection_cursor = connection.cursor()
