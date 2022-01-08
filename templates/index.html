@@ -87,10 +87,14 @@
 <script src="{{ url_for('static',filename='chart.js') }}"></script>
 <script src="{{ url_for('static',filename='bootstrap.min.js') }}"></script>
 <script>
+    device_list = [];
     function init_columns(){
+        //empty the device list
+        device_list = [];
         console.log('Initiating columns')
         $.getJSON("{{ url_for('data') }}", function (data) {
             $.each(data, function (i, item) {
+                device_list.push(item);
                 $("#stats-show").append(`
                     <div class="col-12 col-md-6 py-3 px-2" id="` + item[0] + `">
                         <div class="card bg-white border-0 shadow">
@@ -124,12 +128,14 @@
                                     <div class="col-12 col-md-6">
                                         <div class="border px-2 py-1">
                                             <span class="d-block fs-4"><i class="bi bi-clock fs-3"></i> Interval</span>
-                                            <select class="form-control w-100" style="height: 32px;border:0; border-bottom:2px solid blue;border-radius:0;">
-                                                <option>1 Minute</option>
-                                                <option>2 Minute</option>
-                                                <option>3 Minute</option>
-                                                <option>4 Minute</option>
-                                                <option selected="">5 Minute</option>
+                                            <select class="form-control w-100 interval" style="height: 32px;border:0; border-bottom:2px solid blue;border-radius:0;" id="` + item[0] + `-interval">
+                                                <option value="-1">Off</option>
+                                                <option value="0">Always On</option>
+                                                <option value="5">5 Seconds</option>
+                                                <option value="10">10 Seconds</option>
+                                                <option value="15">15 Seconds</option>
+                                                <option value="30">30 Seconds</option>
+                                                <option value="60">1 Minute</option>
                                             </select>
                                         </div>
                                     </div>
@@ -207,6 +213,26 @@
         });
     });
 
+    //on interval change for each deivce
+
+    $(document).on('change', '.interval', function () {
+        var id = $(this).attr('id').split('-')[0];
+        var interval = $(this).val();
+        console.log(id, interval)
+        $.ajax({
+            url: "{{ url_for('set_interval') }}",
+            type: "POST",
+            data: {
+                id: id,
+                interval: interval
+            },
+            success: function (data) {
+                console.log(data)
+            }
+        })
+    });
+
+
     function load_data() {
         $.getJSON("{{ url_for('data') }}", function (data) {
             $.each(data, function (i, item) {
@@ -230,6 +256,12 @@
                     $("#notification-" + item[0]).html('<span class="px-1 badge bg-primary">NO PROBLEMS DETECTED</span>')
                 }
                 $("#" + item[0] + "-table-status").html(item[3])
+                //foe each interval value, if the value matches set as active
+                $("#" + item[0] + "-interval").children().each(function () {
+                    if ($(this).val() == item[4]) {
+                        $(this).attr('selected', 'selected')
+                    }
+                });
             });
         });
     }

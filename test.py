@@ -8,7 +8,7 @@ def publish(client, topic, payload):
 client = mqtt.Client()
 client.publish("A-battery", "20")
 
-client.connect("192.168.0.15", 1883, 60)
+client.connect("34.127.121.177", 1883, 60)
 
 max_battery_value = [90, 70, 10]
 current_battery = [90, 70, 60]
@@ -23,6 +23,7 @@ while True:
   publish(client, "A-water_level", current_water[0])
   publish(client, "B-water_level", current_water[1])
   publish(client, "C-water_level", current_water[2])
+  publish(client, "NF1", 22)
 
   for i in range(len(max_battery_value)):
     current_battery[i] -= 1

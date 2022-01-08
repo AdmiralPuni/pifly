@@ -2,7 +2,7 @@ import paho.mqtt.client as mqtt
 from tqdm import tqdm
 import sql
 
-topic_list = ['battery', 'water_level']
+topic_list = ['battery', 'water_level', 'radar']
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -24,6 +24,6 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("192.168.0.15", 1883, 60)
+client.connect("34.127.121.177", 1883, 60)
 
 client.loop_forever()

@@ -1,6 +1,14 @@
 import flask
 import json
 import sql
+import paho.mqtt.client as mqtt
+
+def publish(client, topic, payload):
+  client.publish(topic, payload, qos=0)
+
+client = mqtt.Client()
+
+client.connect("34.127.121.177", 1883, 60)
 
 # Create the application.
 APP = flask.Flask(__name__)
@@ -23,6 +31,14 @@ def coindata():
 def add_device():
   data = flask.request.form['device-id']
   sql.insert_new_device(data)
+  return 'OK'
+
+@APP.route('/device/interval', methods=['POST'])
+def set_interval():
+  device_id = flask.request.form['id']
+  interval = flask.request.form['interval']
+  sql.update_field('interval', interval, device_id)
+  publish(client, device_id, interval)
   return 'OK'
 
 @APP.route('/device/remove', methods=['GET'])
