@@ -9,6 +9,7 @@
 #define water_80 D4
 #define water_100 D5
 #define radar D6
+#define atomizer D7
 #define analog A0
 
 const char* ssid = "Toko Bangunan";
@@ -51,6 +52,7 @@ void setup(){
   pinMode(water_80, OUTPUT);
   pinMode(water_100, OUTPUT);
   pinMode(radar, OUTPUT);
+  pinMode(atomizer, OUTPUT);
 }
 
 void callback(String topic, byte* message, unsigned int length) {
@@ -189,4 +191,26 @@ int read_water(){
   delay(50);
 
   return level;
+}
+
+void toggle_atomizer(int duration){
+  digitalWrite(atomizer, LOW);
+  delay(100);
+  digitalWrite(atomizer, HIGH);
+  delay(100);
+  digitalWrite(atomizer, LOW);
+
+  delay(duration);
+
+  digitalWrite(atomizer, LOW);
+  delay(100);
+  digitalWrite(atomizer, HIGH);
+  delay(100);
+  digitalWrite(atomizer, LOW);
+  delay(100);
+  digitalWrite(atomizer, LOW);
+  delay(100);
+  digitalWrite(atomizer, HIGH);
+  delay(100);
+  digitalWrite(atomizer, LOW);
 }
