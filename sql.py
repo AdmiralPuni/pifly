@@ -67,7 +67,7 @@ def select_device_id():
 
 def main():
   print(select_device_id())
-  return
+  #return
   reset_database()
   insert_new_device('A')
   insert_new_device('B')
