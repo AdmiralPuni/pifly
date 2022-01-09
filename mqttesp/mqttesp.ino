@@ -12,8 +12,8 @@
 #define atomizer D7
 #define analog A0
 
-const char* ssid = "Subspace WiFi Emitter";
-const char* password = "emhemhemh";
+const char* ssid = "W2";
+const char* password = "DeflectorDish";
 const char* mqtt_server = "34.127.121.177";
 const char* device_id = "NF1";
 
@@ -24,6 +24,9 @@ int analogInPin  = A0;    // Analog input pin
 int sensorValue;          // Analog Output of Sensor
 float calibration = 0;
 int bat_percentage;
+int interval = 10;
+unsigned long start_time = 0;
+unsigned long atomizer_toggle = 0;
 
 void setup_wifi() {
   delay(10);
@@ -54,16 +57,20 @@ void setup(){
   pinMode(water_100, OUTPUT);
   pinMode(radar, OUTPUT);
   pinMode(atomizer, OUTPUT);
+  start_time = millis();
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
+  String converted = "";
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
   for (int i=0;i<length;i++) {
     Serial.print((char)payload[i]);
+    converted += (char)payload[i];
   }
   Serial.println();
+  interval = converted.toInt();
 }
 
 // This functions reconnects your ESP8266 to your MQTT broker
@@ -110,7 +117,29 @@ void loop() {
   Serial.println(water_level);
   Serial.print("RAD  : ");
   Serial.println(radar_value);
-  delay(200);
+  Serial.print("INT  : ");
+  Serial.println(interval);
+
+  if(interval == 0){
+    //turn_on_atomizer();
+    atomizer_toggle = millis();
+  }
+  else if(interval == -1){
+    interval = -1;
+  }
+  else{
+    if(millis() > start_time + (interval * 1000)){
+      start_time = millis();
+      Serial.println(start_time);
+      atomizer_toggle = millis();
+      //turn_on_atomizer();
+    }
+  }
+
+  if(millis() > atomizer_toggle + 2000){
+    //turn_off_atomizer();
+    atomizer_toggle = millis();
+  }
 }
 
 int read_analog(){
@@ -122,10 +151,10 @@ float mapfloat(float x, float in_min, float in_max, float out_min, float out_max
 }
 
 int read_radar(){
-  digitalWrite(radar, LOW);
+  digitalWrite(radar, HIGH);
   delay(150);
   int value = analogRead(analog);
-  digitalWrite(radar, HIGH);
+  digitalWrite(radar, LOW);
   delay(50);
 
   return value;
@@ -192,15 +221,17 @@ int read_water(){
   return level;
 }
 
-void toggle_atomizer(int duration){
+void turn_on_atomizer(){
+  Serial.println("Activating atomizer");
   digitalWrite(atomizer, LOW);
   delay(100);
   digitalWrite(atomizer, HIGH);
   delay(100);
   digitalWrite(atomizer, LOW);
+}
 
-  delay(duration);
-
+void turn_off_atomizer(){
+  Serial.println("Deactivating atomizer");
   digitalWrite(atomizer, LOW);
   delay(100);
   digitalWrite(atomizer, HIGH);
