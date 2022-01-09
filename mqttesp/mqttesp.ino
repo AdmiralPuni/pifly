@@ -24,9 +24,10 @@ int analogInPin  = A0;    // Analog input pin
 int sensorValue;          // Analog Output of Sensor
 float calibration = 0;
 int bat_percentage;
-int interval = 10;
+int interval = 99;
 unsigned long start_time = 0;
 unsigned long atomizer_toggle = 0;
+bool atomizer_on = false;
 
 void setup_wifi() {
   delay(10);
@@ -58,6 +59,22 @@ void setup(){
   pinMode(radar, OUTPUT);
   pinMode(atomizer, OUTPUT);
   start_time = millis();
+
+  client.connect("ESP8266-B");
+  client.subscribe(device_id);
+  client.loop();
+  static char convert_char[7];
+  int start_code = 111;
+  dtostrf(start_code, 6, 2, convert_char);
+  
+  client.publish("NF1-start", convert_char);
+  Serial.println("Awaiting interval...");
+  while(interval == 99){
+    client.publish("NF1-start", convert_char);
+    Serial.print(".");
+    delay(500);
+    client.loop();
+  }
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -121,24 +138,27 @@ void loop() {
   Serial.println(interval);
 
   if(interval == 0){
-    //turn_on_atomizer();
+    if(!atomizer_on){
+      turn_on_atomizer();
+    }
     atomizer_toggle = millis();
   }
   else if(interval == -1){
-    interval = -1;
+    if(atomizer_on){
+      turn_off_atomizer();
+    }
   }
   else{
     if(millis() > start_time + (interval * 1000)){
-      start_time = millis();
+      start_time = millis() + 2000;
       Serial.println(start_time);
       atomizer_toggle = millis();
-      //turn_on_atomizer();
+      turn_on_atomizer();
     }
   }
 
-  if(millis() > atomizer_toggle + 2000){
-    //turn_off_atomizer();
-    atomizer_toggle = millis();
+  if(millis() > atomizer_toggle + 2000 && atomizer_on){
+    turn_off_atomizer();
   }
 }
 
@@ -222,6 +242,7 @@ int read_water(){
 }
 
 void turn_on_atomizer(){
+  atomizer_on = true;
   Serial.println("Activating atomizer");
   digitalWrite(atomizer, LOW);
   delay(100);
@@ -231,6 +252,7 @@ void turn_on_atomizer(){
 }
 
 void turn_off_atomizer(){
+  atomizer_on = false;
   Serial.println("Deactivating atomizer");
   digitalWrite(atomizer, LOW);
   delay(100);

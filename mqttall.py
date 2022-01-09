@@ -2,7 +2,10 @@ import paho.mqtt.client as mqtt
 from tqdm import tqdm
 import sql
 
-topic_list = ['battery', 'water_level', 'radar']
+topic_list = ['battery', 'water_level', 'radar', 'start']
+
+def publish(client, topic, payload):
+  client.publish(topic, payload, qos=0)
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -17,8 +20,12 @@ def on_message(client, userdata, msg):
   for identifier in sql.select_device_id():
     for topic in topic_list:
       if msg.topic == identifier + '-' + topic:
-        sql.update_field(topic, realmsg, identifier)
-        print('Updating device', identifier, 'with', topic, '=', realmsg)
+        if topic == 'start':
+          publish(client, identifier, sql.get_interval_single(identifier))
+          print("Sending interval to " + identifier)
+        else:
+          sql.update_field(topic, realmsg, identifier)
+          print('Updating device', identifier, 'with', topic, '=', realmsg)
 
 client = mqtt.Client()
 client.on_connect = on_connect

@@ -34,6 +34,11 @@ def reset_database():
   connection_cursor.close()
   create_table()
 
+def get_interval_single(id):
+  connection_cursor = connection.cursor()
+  connection_cursor.execute("SELECT interval FROM devices WHERE id=? LIMIT 1", (id,))
+  return connection_cursor.fetchone()[0]
+
 def select_all_device():
   connection_cursor = connection.cursor()
   connection_cursor.execute("SELECT * FROM devices")
@@ -67,8 +72,11 @@ def select_device_id():
   return id_list
 
 def main():
+  update_field('interval', 60, 'NF1')
   print(select_device_id())
-  #return
+  print(get_interval_single('NF1'))
+
+  return
   reset_database()
   insert_new_device('A')
   insert_new_device('B')

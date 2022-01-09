@@ -38,6 +38,7 @@ def set_interval():
   device_id = flask.request.form['id']
   interval = flask.request.form['interval']
   sql.update_field('interval', interval, device_id)
+  client.connect("34.127.121.177", 1883, 60)
   publish(client, device_id, interval)
   return 'OK'
 
