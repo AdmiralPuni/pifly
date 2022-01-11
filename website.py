@@ -8,8 +8,6 @@ def publish(client, topic, payload):
 
 client = mqtt.Client()
 
-client.connect("34.127.121.177", 1883, 60)
-
 # Create the application.
 APP = flask.Flask(__name__)
 
@@ -38,7 +36,7 @@ def set_interval():
   device_id = flask.request.form['id']
   interval = flask.request.form['interval']
   sql.update_field('interval', interval, device_id)
-  client.connect("34.127.121.177", 1883, 60)
+  client.connect("192.168.43.109", 1883, 60)
   publish(client, device_id, interval)
   return 'OK'
 
