@@ -12,9 +12,9 @@
 #define atomizer D7
 #define analog A0
 
-const char* ssid = "W2";
-const char* password = "DeflectorDish";
-const char* mqtt_server = "34.127.121.177";
+const char* ssid = "Toko Bangunan";
+const char* password = "ponorogo";
+const char* mqtt_server = "192.168.0.15";
 const char* device_id = "NF1";
 
 WiFiClient espClient;
@@ -62,6 +62,7 @@ void setup(){
 
   client.connect("ESP8266-B");
   client.subscribe(device_id);
+  client.subscribe("ping");
   client.loop();
   static char convert_char[7];
   int start_code = 111;
@@ -69,22 +70,32 @@ void setup(){
   
   client.publish("NF1-start", convert_char);
   Serial.println("Awaiting interval...");
+  start_time = millis();
   while(interval == 99){
     client.publish("NF1-start", convert_char);
     Serial.print(".");
     delay(500);
     client.loop();
+    if(start_time + 5000 > millis()){
+      interval = 15;
+    }
   }
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
   String converted = "";
+  String topic_converted = topic;
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
   for (int i=0;i<length;i++) {
     Serial.print((char)payload[i]);
     converted += (char)payload[i];
+  }
+  if(topic_converted == "ping"){
+    client.publish("ack-ping", device_id);
+    Serial.println("Pinged");
+    return;
   }
   Serial.println();
   interval = converted.toInt();
@@ -101,6 +112,7 @@ void reconnect() {
       // Subscribe or resubscribe to a topic
       // You can subscribe to more topics (to control more LEDs in this example)
       client.subscribe(device_id);
+      client.subscribe("ping");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -157,7 +169,7 @@ void loop() {
     }
   }
 
-  if(millis() > atomizer_toggle + 2000 && atomizer_on){
+  if(millis() > atomizer_toggle + 5000 && atomizer_on){
     turn_off_atomizer();
   }
 }
@@ -172,7 +184,7 @@ float mapfloat(float x, float in_min, float in_max, float out_min, float out_max
 
 int read_radar(){
   digitalWrite(radar, HIGH);
-  delay(150);
+  delay(1500);
   int value = analogRead(analog);
   digitalWrite(radar, LOW);
   delay(50);

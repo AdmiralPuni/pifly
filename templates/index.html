@@ -29,6 +29,10 @@
         .btn-primary{
             background-color: #4E73DE !important;
         }
+
+        .text-dark{
+            color: #7b8591 !important;
+        }
     </style>
 </head>
 
@@ -54,23 +58,24 @@
             <div class="col-2 col-md-2 px-0">
                 <div class="d-flex sticky-top flex-column flex-shrink-0 p-1 p-md-3" style="min-height: 100vh;background-color: #C1EBF9;">
                     <a class="nav-link-light d-block btn btn-outline-light fs-3 border-0 my-0 text-dark" href="">
-                        <i class="bi bi-wind"></i> <span class="d-none d-md-inline">Noflies</span>
+                        <img src="{{ url_for('static',filename='nofly_logo-removebg-preview.png') }}" class="img-fluid" style="width:20%;" alt="">
+                        <span class="fs-4 text-uppercase fw-bold">Nofly</span>
                     </a>
                     <hr>
-                    <a class="nav-link-light d-block btn btn-outline-light fs-5 text-center text-md-start border-0 my-1 text-dark" href="">
+                    <a class="nav-link-light d-block btn btn-outline-light fs-6 text-center text-md-start border-0 my-1 text-dark" href="">
                         <i class="bi bi-house"></i> <span class="d-none d-md-inline">Dashboard</span>
                     </a>
-                    <a class="nav-link-light d-block btn btn-outline-light fs-5 text-center text-md-start border-0 my-1 text-dark" href="">
+                    <a class="nav-link-light d-block btn btn-outline-light fs-6 text-center text-md-start border-0 my-1 text-dark" href="">
                         <i class="bi bi-gear"></i> <span class="d-none d-md-inline">Settings</span>
                     </a>
-                    <a class="nav-link-light d-block btn btn-outline-light fs-5 text-center text-md-start border-0 my-1 text-dark" href="">
+                    <a class="nav-link-light d-block btn btn-outline-light fs-6 text-center text-md-start border-0 my-1 text-dark" href="">
                         <i class="bi bi-folder"></i> <span class="d-none d-md-inline">Pages</span>
                     </a>
                 </div>
             </div>
             <div class="col-10 col-md-10 bg-white px-0">
                 <div class="d-block bg-light sticky-top py-3 text-end px-3">
-                    SATGAS TEAM
+                    NOFLY
                 </div>
                 <div class="container-fluid">
                     <span class="display-6 d-block mt-3">Dashboard</span>
@@ -255,7 +260,13 @@
                 else{
                     $("#notification-" + item[0]).html('<span class="px-1 badge bg-primary">NO PROBLEMS DETECTED</span>')
                 }
-                $("#" + item[0] + "-table-status").html(item[3])
+                //if item 3 is more than 10 then occupied
+                if(item[3] > 20){
+                    $("#" + item[0] + "-table-status").html('OCCUPIED')
+                }
+                else{
+                    $("#" + item[0] + "-table-status").html('AVAILABLE')
+                }
                 //foe each interval value, if the value matches set as active
                 $("#" + item[0] + "-interval").children().each(function () {
                     if ($(this).val() == item[4]) {
