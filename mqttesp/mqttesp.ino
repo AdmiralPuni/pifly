@@ -15,7 +15,7 @@
 const char* ssid = "Toko Bangunan";
 const char* password = "ponorogo";
 const char* mqtt_server = "192.168.0.15";
-const char* device_id = "NF1";
+const char* device_id = "NF2";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -68,11 +68,11 @@ void setup(){
   int start_code = 111;
   dtostrf(start_code, 6, 2, convert_char);
   
-  client.publish("NF1-start", convert_char);
+  client.publish("NF2-start", convert_char);
   Serial.println("Awaiting interval...");
   start_time = millis();
   while(interval == 99){
-    client.publish("NF1-start", convert_char);
+    client.publish("NF2-start", convert_char);
     Serial.print(".");
     delay(500);
     client.loop();
@@ -135,11 +135,11 @@ void loop() {
   client.connect("ESP8266-B");
   static char convert_char[7];
   dtostrf(water_level, 6, 2, convert_char);
-  client.publish("NF1-water_level", convert_char);
+  client.publish("NF2-water_level", convert_char);
   dtostrf(battery_level, 6, 2, convert_char);
-  client.publish("NF1-battery", convert_char);
+  client.publish("NF2-battery", convert_char);
   dtostrf(radar_value, 6, 2, convert_char);
-  client.publish("NF1-radar", convert_char);
+  client.publish("NF2-radar", convert_char);
   Serial.print("BAT  : ");
   Serial.println(battery_level);
   Serial.print("WAT  : ");
