@@ -1,6 +1,6 @@
 //import mqtt library
 #include <PubSubClient.h>
-#include <WiFi.h>
+#include <ESP8266WiFi.h>
 
 #define battery D0
 #define water_20 D1

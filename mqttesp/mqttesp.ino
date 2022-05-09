@@ -2,19 +2,26 @@
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
 
-#define battery D0
-#define water_20 D1
-#define water_40 D2
-#define water_60 D3
-#define water_80 D4
-#define water_100 D5
-#define radar D6
-#define atomizer D7
-#define analog A0
+#define battery      D0
+#define WATER_20     D1
+#define WATER_40     D2
+#define WATER_60     D3
+#define WATER_80     D4
+#define WATER_100    D5
+#define radar        D6
+#define atomizer     D7
+#define analog       A0
+
+#define RGB_BLUE     D1
+#define RGB_RED      D2
+
+//water level pin array
+const int WATER_PINS[5] = {WATER_20, WATER_40, WATER_60, WATER_80, WATER_100};
+bool RGB_STATE[2] = {false, false};
 
 const char* ssid = "Toko Bangunan";
 const char* password = "ponorogo";
-const char* mqtt_server = "192.168.0.15";
+const char* mqtt_server = "broker.hivemq.com";
 const char* device_id = "NF2";
 
 WiFiClient espClient;
@@ -48,19 +55,28 @@ void setup_wifi() {
 void setup(){
   Serial.begin(115200);
   setup_wifi();
+  Serial.println("Connecting to MQTT broker");
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
+
+  Serial.println("Setting up pins");
   pinMode(battery, OUTPUT);
-  pinMode(water_20, OUTPUT);
-  pinMode(water_40, OUTPUT);
-  pinMode(water_60, OUTPUT);
-  pinMode(water_80, OUTPUT);
-  pinMode(water_100, OUTPUT);
+  pinMode(WATER_20, OUTPUT);
+  pinMode(WATER_40, OUTPUT);
+  pinMode(WATER_60, OUTPUT);
+  pinMode(WATER_80, OUTPUT);
+  pinMode(WATER_100, OUTPUT);
   pinMode(radar, OUTPUT);
   pinMode(atomizer, OUTPUT);
+
+  //init leds
+  pinMode(RGB_BLUE, OUTPUT);
+  pinMode(RGB_RED, OUTPUT);
+
   start_time = millis();
 
-  client.connect("ESP8266-B");
+  Serial.println("MQTT init");
+  client.connect("NF2-ESP8266-B");
   client.subscribe(device_id);
   client.subscribe("ping");
   client.loop();
@@ -129,13 +145,13 @@ void loop() {
   }
   client.loop();
   int battery_level = read_battery();
-  int water_level = read_water();
+  int WATER_level = read_water();
   int radar_value = read_radar();
   
   client.connect("ESP8266-B");
   static char convert_char[7];
-  dtostrf(water_level, 6, 2, convert_char);
-  client.publish("NF2-water_level", convert_char);
+  dtostrf(WATER_level, 6, 2, convert_char);
+  client.publish("NF2-WATER_level", convert_char);
   dtostrf(battery_level, 6, 2, convert_char);
   client.publish("NF2-battery", convert_char);
   dtostrf(radar_value, 6, 2, convert_char);
@@ -143,7 +159,7 @@ void loop() {
   Serial.print("BAT  : ");
   Serial.println(battery_level);
   Serial.print("WAT  : ");
-  Serial.println(water_level);
+  Serial.println(WATER_level);
   Serial.print("RAD  : ");
   Serial.println(radar_value);
   Serial.print("INT  : ");
@@ -205,50 +221,30 @@ int read_battery(){
   int bat_percentage = mapfloat(voltage, 2.8, 4.2, 0, 100); //2.8V as Battery Cut off Voltage & 4.2V as Maximum Voltage
   bat_percentage = ((voltage)/(4.2))*100;
 
+  if(bat_percentage < 30){
+    switch_rgb(2);
+  }
+
   return bat_percentage*2;
 }
 
 int read_water(){
+  int water_treshold = 200;
   int level = 0;
-  digitalWrite(water_20, HIGH);
-  delay(50);
-  if(read_analog() > 200){
-    level = 20;
+
+  for(int i = 0; i < 5; i++){
+    digitalWrite(WATER_PINS[i], HIGH);
+    delay(50);
+    if(read_analog() > water_treshold){
+      level = (i+1) * 20;
+    }
+    digitalWrite(WATER_PINS[i], LOW);
+    delay(50);
   }
-  digitalWrite(water_20, LOW);
-  delay(50);
-  
-  digitalWrite(water_40, HIGH);
-  delay(50);
-  if(read_analog() > 200){
-    level = 40;
+
+  if(level == 20){
+    switch_rgb(1);
   }
-  digitalWrite(water_40, LOW);
-  delay(50);
-  
-  digitalWrite(water_60, HIGH);
-  delay(50);
-  if(read_analog() > 200){
-    level = 60;
-  }
-  digitalWrite(water_60, LOW);
-  delay(50);
-  
-  digitalWrite(water_80, HIGH);
-  delay(50);
-  if(read_analog() > 200){
-    level = 80;
-  }
-  digitalWrite(water_80, LOW);
-  delay(50);
-  
-  digitalWrite(water_100, HIGH);
-  delay(50);
-  if(read_analog() > 200){
-    level = 100;
-  }
-  digitalWrite(water_100, LOW);
-  delay(50);
 
   return level;
 }
@@ -277,4 +273,25 @@ void turn_off_atomizer(){
   digitalWrite(atomizer, HIGH);
   delay(100);
   digitalWrite(atomizer, LOW);
+}
+
+void switch_rgb(int color){
+  //1 RED, 2 BLUE, 4 OFF
+
+  digitalWrite(RGB_BLUE, LOW);
+  digitalWrite(RGB_RED, LOW);
+
+  if(color == 2){
+    digitalWrite(RGB_BLUE, HIGH);
+    digitalWrite(RGB_RED, LOW);
+  }
+  else if(color == 1){
+    digitalWrite(RGB_BLUE, LOW);
+    digitalWrite(RGB_RED, HIGH);
+  }
+  else if(color == 4){
+    digitalWrite(RGB_BLUE, LOW);
+    digitalWrite(RGB_RED, LOW);
+  }
+
 }

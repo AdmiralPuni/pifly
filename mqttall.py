@@ -19,7 +19,9 @@ def publish(client, topic, payload):
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
   #print("Connected with result code "+str(rc))
-  client.subscribe('#')
+  for identifier in sql.select_device_id():
+    for topic in topic_list:
+      client.subscribe(identifier + '-' + topic)
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
@@ -50,7 +52,7 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("192.168.0.15", 1883, 60)
+client.connect("broker.hivemq.com", 1883, 60)
 #clear the buffer
 client.loop(2)
 
