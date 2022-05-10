@@ -12,8 +12,9 @@
 #define atomizer     D7
 #define analog       A0
 
-#define RGB_BLUE     D1
-#define RGB_RED      D2
+#define RGB_BLUE     D8
+#define RGB_RED      D1
+#define RGB_GREEN    D2
 
 //water level pin array
 const int WATER_PINS[5] = {WATER_20, WATER_40, WATER_60, WATER_80, WATER_100};
@@ -22,7 +23,9 @@ bool RGB_STATE[2] = {false, false};
 const char* ssid = "Toko Bangunan";
 const char* password = "ponorogo";
 const char* mqtt_server = "broker.hivemq.com";
-const char* device_id = "NF2";
+const char* device_id = "NF5";
+const char* MQTT_DEVICE_ID = "NF5";
+const char* MQTT_TOPICS[5] = {"NFFD-WATER", "NFFD-BATTERY", "NFFD-RADAR", "", ""};
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -77,8 +80,7 @@ void setup(){
 
   Serial.println("MQTT init");
   client.connect("NF2-ESP8266-B");
-  client.subscribe(device_id);
-  client.subscribe("ping");
+  client.subscribe(String(MQTT_DEVICE_ID + String("-INTERVAL")).c_str());
   client.loop();
   static char convert_char[7];
   int start_code = 111;
@@ -113,8 +115,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.println("Pinged");
     return;
   }
+  if(topic_converted == "NF2-INTERVAL"){
+    interval = converted.toInt();
+    Serial.print("Interval set to ");
+    Serial.println(interval);
+    return;
+  }
   Serial.println();
-  interval = converted.toInt();
 }
 
 // This functions reconnects your ESP8266 to your MQTT broker
@@ -149,13 +156,13 @@ void loop() {
   int radar_value = read_radar();
   
   client.connect("ESP8266-B");
-  static char convert_char[7];
-  dtostrf(WATER_level, 6, 2, convert_char);
-  client.publish("NF2-WATER_level", convert_char);
-  dtostrf(battery_level, 6, 2, convert_char);
-  client.publish("NF2-battery", convert_char);
-  dtostrf(radar_value, 6, 2, convert_char);
-  client.publish("NF2-radar", convert_char);
+
+  //publish data to MQTT
+  //{"NFFD-WATER", "NFFD-BATTERY", "NFFD-RADAR", "", ""};
+  send_data(0, WATER_level);
+  send_data(1, battery_level);
+  send_data(2, radar_value);
+
   Serial.print("BAT  : ");
   Serial.println(battery_level);
   Serial.print("WAT  : ");
@@ -188,6 +195,16 @@ void loop() {
   if(millis() > atomizer_toggle + 5000 && atomizer_on){
     turn_off_atomizer();
   }
+}
+
+void send_data(int mqtt_topic_no, int data){
+  Serial.println("Sending " + String(MQTT_TOPICS[mqtt_topic_no]) + " with value " + String(data));
+  static char convert_char[10];
+  char* comma = ",";
+  //add MQTT_DEVICE_ID to data
+  dtostrf(data, 6, 2, convert_char);
+  String data_string = MQTT_DEVICE_ID + String(comma) + String(convert_char);
+  client.publish(MQTT_TOPICS[mqtt_topic_no], data_string.c_str());
 }
 
 int read_analog(){
@@ -252,26 +269,12 @@ int read_water(){
 void turn_on_atomizer(){
   atomizer_on = true;
   Serial.println("Activating atomizer");
-  digitalWrite(atomizer, LOW);
-  delay(100);
   digitalWrite(atomizer, HIGH);
-  delay(100);
-  digitalWrite(atomizer, LOW);
 }
 
 void turn_off_atomizer(){
   atomizer_on = false;
   Serial.println("Deactivating atomizer");
-  digitalWrite(atomizer, LOW);
-  delay(100);
-  digitalWrite(atomizer, HIGH);
-  delay(100);
-  digitalWrite(atomizer, LOW);
-  delay(100);
-  digitalWrite(atomizer, LOW);
-  delay(100);
-  digitalWrite(atomizer, HIGH);
-  delay(100);
   digitalWrite(atomizer, LOW);
 }
 

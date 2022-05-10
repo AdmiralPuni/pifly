@@ -36,8 +36,8 @@ def set_interval():
   device_id = flask.request.form['id']
   interval = flask.request.form['interval']
   sql.update_field('interval', interval, device_id)
-  client.connect("192.168.0.15", 1883, 60)
-  publish(client, device_id, interval)
+  client.connect("broker.hivemq.com", 1883, 60)
+  publish(client, device_id + "-INTERVAL", interval)
   return 'OK'
 
 @APP.route('/device/remove', methods=['GET'])
