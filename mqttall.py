@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 import sql
 import time
 import csv
+import datetime
 
 topic_list = ["NFFD-BATTERY", "NFFD-WATER", "NFFD-RADAR"]
 db_field = ["battery", "water_level", "radar"]
@@ -28,6 +29,7 @@ def on_message(client, userdata, msg):
   realmsg = realmsg[2:]
   topic = msg.topic
   device_id, payload = realmsg.split(',')
+  print("DATETIME   :", datetime.datetime.now())
   print("TOPIC      :", topic)
   print("DEVICE_ID  :", device_id)
   print("PAYLOAD    :", float(payload))
