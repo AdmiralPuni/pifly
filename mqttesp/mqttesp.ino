@@ -13,8 +13,8 @@
 #define analog       A0
 
 #define RGB_BLUE     D8
-#define RGB_RED      D1
-#define RGB_GREEN    D2
+#define RGB_RED      12
+#define RGB_GREEN    11
 
 //water level pin array
 const int WATER_PINS[5] = {WATER_20, WATER_40, WATER_60, WATER_80, WATER_100};
@@ -26,6 +26,7 @@ const char* mqtt_server = "broker.hivemq.com";
 const char* device_id = "NF5";
 const char* MQTT_DEVICE_ID = "NF5";
 const char* MQTT_DEVICE_INTERVAL = "NF5-INTERVAL";
+const char* MQTT_INTERVAL_TRIGGER = "NFFD-INTERVAL-TRIGGER";
 const char* MQTT_DEVICE_NAME = "NF5-ESP8266";
 const char* MQTT_TOPICS[5] = {"NFFD-WATER", "NFFD-BATTERY", "NFFD-RADAR", "", ""};
 
@@ -87,20 +88,18 @@ void setup(){
   client.connect(MQTT_DEVICE_NAME);
   client.subscribe(MQTT_DEVICE_INTERVAL);
   client.loop();
-  static char convert_char[7];
-  int start_code = 111;
-  dtostrf(start_code, 6, 2, convert_char);
-  
-  client.publish("NF2-start", convert_char);
+
+  client.publish(MQTT_INTERVAL_TRIGGER, MQTT_DEVICE_ID);
   Serial.println("Awaiting interval...");
   start_time = millis();
   while(interval == 99){
-    client.publish("NF2-start", convert_char);
+    client.publish(MQTT_INTERVAL_TRIGGER, MQTT_DEVICE_ID);
     Serial.print(".");
     delay(500);
     client.loop();
-    if(start_time + 5000 > millis()){
-      interval = 15;
+    //set to default value if no interval is set
+    if(millis() - start_time > 10000){
+      interval = 10;
     }
   }
 }
@@ -108,8 +107,10 @@ void setup(){
 void loop() {
   if (!client.connected()) {
     reconnect();
-    client.loop();
+    
   }
+
+  client.loop();
   
   //every 3 second report the readings
   if(report_time + 3000 < millis()){

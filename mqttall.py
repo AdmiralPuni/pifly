@@ -4,7 +4,7 @@ import time
 import csv
 import datetime
 
-topic_list = ["NFFD-BATTERY", "NFFD-WATER", "NFFD-RADAR"]
+topic_list = ["NFFD-BATTERY", "NFFD-WATER", "NFFD-RADAR", "NFFD-INTERVAL-TRIGGER"]
 db_field = ["battery", "water_level", "radar"]
 latency_csv = 'csv/csvlatency.csv'
 
@@ -28,12 +28,25 @@ def on_message(client, userdata, msg):
   realmsg = str(msg.payload)[:-1]
   realmsg = realmsg[2:]
   topic = msg.topic
+  if topic == "NFFD-INTERVAL-TRIGGER":
+    interval = sql.get_interval_single(realmsg)
+    publish(client, realmsg + "-INTERVAL", interval)
+    return
   device_id, payload = realmsg.split(',')
+  if topic == "NFFD-BATTERY" and payload != '0.0':
+    #reduce 300% error
+    payload = float(payload) * 0.7
+    
+    
   print("DATETIME   :", datetime.datetime.now())
   print("TOPIC      :", topic)
   print("DEVICE_ID  :", device_id)
   print("PAYLOAD    :", float(payload))
+  #battery is bugged to 300%
+  
+
   sql.update_field(db_field[topic_list.index(topic)], payload, device_id)
+  
   
 client = mqtt.Client()
 client.on_connect = on_connect

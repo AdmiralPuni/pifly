@@ -3,10 +3,10 @@ import json
 import sql
 import paho.mqtt.client as mqtt
 
-client = mqtt.Client()
+def publish(client, topic, payload):
+  client.publish(topic, payload)
 
-def publish(topic, payload):
-  client.publish(topic, payload, qos=0)
+client = mqtt.Client()
 
 # Create the application.
 APP = flask.Flask(__name__)
@@ -37,9 +37,9 @@ def set_interval():
   interval = flask.request.form['interval']
   sql.update_field('interval', interval, device_id)
   #check if client is connected
-  if client.is_connected() == False:
-    client.connect("broker.hivemq.com", 1883, 60)
-  publish(device_id + "-INTERVAL", interval)
+  client.connect("broker.hivemq.com", 1883, 60)
+  publish(client, device_id + "-INTERVAL", interval)
+  print("SETTING INTERVAL:", device_id + "-INTERVAL", interval)
   return 'OK'
 
 @APP.route('/device/remove', methods=['GET'])
