@@ -25,8 +25,9 @@ def create_table():
 def update_field(field, value, id):
   connection_cursor = connection.cursor()
   connection_cursor.execute("UPDATE devices SET " + field + "=? WHERE id=?", (value, id))
-  connection_cursor.close()
+  
   connection.commit()
+  connection_cursor.close()
 
 def reset_database():
   connection_cursor = connection.cursor()
