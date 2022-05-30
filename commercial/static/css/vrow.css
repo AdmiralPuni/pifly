@@ -1,0 +1,81 @@
+.row-v {
+    --bs-gutter-y: 1.5rem;
+    --bs-gutter-x: 0;
+    height: 100%;
+}
+
+.row-v>* {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+}
+
+.col-v {
+    flex: 1 0 0%;
+}
+
+.col-v-auto {
+    flex: 0 0 auto;
+    height: auto;
+}
+
+.col-v-1 {
+    flex: 0 0 auto;
+    height: 8.33333333%;
+}
+
+.col-v-2 {
+    flex: 0 0 auto;
+    height: 16.66666667%;
+}
+
+.col-v-3 {
+    flex: 0 0 auto;
+    height: 25%;
+}
+
+.col-v-4 {
+    flex: 0 0 auto;
+    height: 33.33333333%;
+}
+
+.col-v-5 {
+    flex: 0 0 auto;
+    height: 41.66666667%;
+}
+
+.col-v-6 {
+    flex: 0 0 auto;
+    height: 50%;
+}
+
+.col-v-7 {
+    flex: 0 0 auto;
+    height: 58.33333333%;
+}
+
+.col-v-8 {
+    flex: 0 0 auto;
+    height: 66.66666667%;
+}
+
+.col-v-9 {
+    flex: 0 0 auto;
+    height: 75%;
+}
+
+.col-v-10 {
+    flex: 0 0 auto;
+    height: 83.33333333%;
+}
+
+.col-v-11 {
+    flex: 0 0 auto;
+    height: 91.66666667%;
+}
+
+.col-v-12 {
+    flex: 0 0 auto;
+    height: 100%;
+}
