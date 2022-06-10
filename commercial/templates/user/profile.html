@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NoFly</title>
+
+
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/custom.css">
+    <link rel="stylesheet" href="/static/css/upalette.css">
+</head>
+
+<body class="bg-ni-sh" style="height:100vh;">
+    <div class="container p-0 bg-white h-100 shadow">
+        <div class="row row-cols-1 m-0 h-100">
+            <div class="col p-0 h-100">
+                <div class="d-flex justify-content-start h-100 w-100 ">
+                    <div class="d-none d-md-flex border-end border-ni-ri bg-dark h-100" style="min-width: 20%;">
+                        {% include('user/components/nav.html') %}
+                    </div>
+                    <div class="flex-fill p-2 h-100" style="overflow-y: scroll;">
+                        <div class="d-flex mb-2 justify-content-between align-items-center p-2 border-bottom border-ni-ri">
+                            <span class="fs-5">
+                                User Profile
+                            </span>
+                            <button class="btn btn-primary py-1" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <i class="bi bi-plus-circle"></i> Tambah
+                            </button>
+                        </div>
+                        <div class="d-block p-2 rounded-top border border-bottom-0 border-ni-ri fs-5">
+                            Data Diri
+                        </div>
+                        <div class="d-flex flex-column rounded-bottom border border-ni-ri p-2 mb-3">
+                            <div class="mb-3">
+                                <label for="form-name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="form-name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="form-email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="form-email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="form-phone" class="form-label">No. Hp</label>
+                                <input type="text" class="form-control" id="form-phone">
+                            </div>
+                            <button class="btn btn-success py-1 align-self-end">
+                                Update Data
+                            </button>
+                        </div>
+                        <div class="d-block p-2 rounded-top border border-bottom-0 border-ni-ri fs-5">
+                            Opsi
+                        </div>
+                        <div class="row row-cols-2 row-cols-md-2 m-0 rounded-bottom border border-ni-ri p-2">
+                            <div class="col">
+                                Keluar dari website
+                            </div>
+                            <div class="col text-end">
+                                <a href="/auth/logout">
+                                    <button class="btn btn-danger py-1">
+                                        Log Out
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include('user/components/nav-mobile.html') %}
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/static/js/user.js"></script>
+<script>
+    $(document).ready(function() {
+        load_data();
+    })
+
+    function load_data(){
+        $.ajax({
+            url: '/api/user/get',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                data = data.data
+                $('#form-name').val(data.name)
+                $('#form-email').val(data.email)
+                $('#form-phone').val(data.phone)
+            }
+        });
+    }
+</script>
+
+</html>

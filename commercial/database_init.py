@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 
-DB_USER = 'root'
-DB_PASS = ''
+DB_USER = 'mg_pifly'
+DB_PASS = 'UsadaPekora'
 DB_HOST = 'localhost'
 DB_PORT = 3306
 DB_NAME = 'pifly'
@@ -28,6 +28,7 @@ table_user = sa.Table('user', sa.MetaData(),
 
 table_device = sa.Table('device', sa.MetaData(),
   sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
+  sa.Column('user_id', sa.Integer, sa.ForeignKey(table_user.c.id)),
   sa.Column('name', sa.String(255)),
   sa.Column('serial_number', sa.String(255)),
   sa.Column('battery', sa.Float),
@@ -46,7 +47,7 @@ def main():
   #create all table
   table_user.create(conn)
   table_device.create(conn)
-  table_user_device.create(conn)
+  #table_user_device.create(conn)
   return True
 
 if __name__ == '__main__':

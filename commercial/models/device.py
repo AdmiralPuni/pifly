@@ -1,8 +1,10 @@
 import sqlalchemy as sa
 from models.connection import conn
+from models.user import table_user
 
 table_device = sa.Table('device', sa.MetaData(),
   sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
+  sa.Column('user_id', sa.Integer, sa.ForeignKey(table_user.c.id)),
   sa.Column('name', sa.String(255)),
   sa.Column('serial_number', sa.String(255)),
   sa.Column('battery', sa.Float),
@@ -32,7 +34,32 @@ class device():
     conn.execute(query)
     return True
   
-  def delete(id):
-    query = table_device.delete().where(table_device.c.id == id)
-    conn.execute(query)
-    return True
+  def delete(serial_number, user_id):
+    #verify if the device is owned by the user
+    query = table_device.select().where(table_device.c.serial_number == serial_number).where(table_device.c.user_id == user_id)
+    result = conn.execute(query).fetchone()
+    if result:
+      query = table_device.delete().where(table_device.c.serial_number == serial_number).where(table_device.c.user_id == user_id)
+      conn.execute(query)
+      return True
+    
+    return False
+
+  def user_devices(user_id):
+    query = table_device.select().where(table_device.c.user_id == user_id)
+    result = conn.execute(query).fetchall()
+    #convert to dict
+    devices = []
+    for row in result:
+      device = {
+        'id': row['id'],
+        'name': row['name'],
+        'serial_number': row['serial_number'],
+        'battery': row['battery'],
+        'water': row['water'],
+        'radar': row['radar'],
+        'interval': row['interval']
+      }
+      devices.append(device)
+    return devices
+    return result

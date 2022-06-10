@@ -1,22 +1,49 @@
-<div class="col-lg-2 col-sm-3 col-md-3 px-0 border-end border-ni-ri border-1 h-100 py-2">
-    <div class="d-flex justify-content-center align-items-center px-2 border-bottom border-ni-ri mb-2">
-        <span class="fs-1 me-2">
-            <i class="bi bi-file-bar-graph"></i>
-        </span>
-        <span class="p-0 flex-wrap fs-4">
-            NoFly
-        </span>
-    </div>
-    <div class="d-flex flex-column justify-content-center align-items-center">
-        <a class="w-100" href="/my/dashboard">
-            <button class="btn btn-nav px-4 fs-5" id="nav-dashboard">
-                <i class="bi bi-speedometer me-3"></i> Dashboard
-            </button>
+<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <img class="img-fluid me-2" src="http://nofly.id/assets/img/logo1.png" alt="" style="height:60px;filter:invert();">
+        <span class="fs-4">NoFly</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column pf-nav-list mb-auto">
+        <li>
+            <a href="/my/dashboard" class="nav-link text-white hover-bg-con">
+                <i class="bi bi-speedometer me-2"></i>
+                Dashboard
+            </a>
+        </li>
+        <li>
+            <a href="/my/devices" class="nav-link text-white hover-bg-con">
+                <i class="bi bi-device-ssd me-2"></i>
+                Perangkat
+            </a>
+        </li>
+        <li>
+            <a href="/my/profile" class="nav-link text-white hover-bg-con">
+                <i class="bi bi-person me-2"></i>
+                Profil
+            </a>
+        </li>
+        <li>
+            <a href="/my/help" class="nav-link text-white hover-bg-con">
+                <i class="bi bi-question-square me-2"></i>
+                Bantuan
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+            <strong id="user-name">mdo</strong>
         </a>
-        <a class="w-100" href="/my/devices">
-            <button class="btn btn-nav px-4 fs-5" id="nav-dashboard">
-                <i class="bi bi-box me-3"></i> Devices
-            </button>
-        </a>
+        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+            <li><a class="dropdown-item" href="#">New project...</a></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="/auth/logout">Sign out</a></li>
+        </ul>
     </div>
 </div>

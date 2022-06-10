@@ -12,9 +12,21 @@ table_user = sa.Table('user', sa.MetaData(),
 )
 
 class user():
-  def get(id):
+  def single(id):
     query = table_user.select().where(table_user.c.id == id)
     result = conn.execute(query).fetchone()
+
+    #convert to dict
+    if result is not None:
+
+      result = dict(result)
+      #remove password, level, id
+      del result['password']
+      del result['level']
+      del result['id']
+      return result
+    else:
+      return False
     return result
   
   def get():
