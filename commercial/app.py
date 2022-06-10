@@ -20,5 +20,4 @@ APP.register_blueprint(api_device_blueprint)
 APP.register_blueprint(api_user_blueprint)
 
 if __name__ == '__main__':
-  APP.run(debug=True, host="0.0.0.0", threaded=True)
-  
+  APP.run(debug=True, host="127.0.0.1", threaded=True)
