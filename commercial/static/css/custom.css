@@ -1,0 +1,25 @@
+.btn-nav{
+    background-color: #FFFFFF;
+    color: #040404;
+    border-radius: 0;
+    width: 100%;
+    text-align: start;
+}
+
+.btn-nav:hover{
+    background-color: #e8e8f0;
+    color: #3730E9;
+}
+
+.btn-nav.active{
+    background-color: #e8e8f0;
+    color: #3730E9;
+}
+
+.hover-bg-con{
+    transition: all 0.2s ease-in-out;
+}
+
+.hover-bg-con:hover{
+    background-color: rgba(255,255,255,0.2);
+}
