@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 
-DB_USER = 'mg_pifly'
-DB_PASS = 'UsadaPekora'
+DB_USER = 'root'
+DB_PASS = ''
 DB_HOST = 'localhost'
 DB_PORT = 3306
 DB_NAME = 'pifly'

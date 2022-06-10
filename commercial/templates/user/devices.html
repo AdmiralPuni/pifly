@@ -43,6 +43,30 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="update-modal" tabindex="-1" aria-labelledby="update-modal" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="update-modal">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="update-serial_number" class="form-label">Nomer Seri Perangkat</label>
+                        <input type="text" class="form-control" id="update-serial_number">
+                    </div>
+                    <div class="mb-3">
+                        <label for="update-name" class="form-label">Nama</label>
+                        <input type="text" class="form-control" id="update-name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btn-update_name">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container p-0 bg-white h-100 shadow">
         <div class="row row-cols-1 m-0 h-100">
             <div class="col p-0 h-100">
@@ -250,7 +274,7 @@
                     device_html += '<span>Interval</span>';
                     device_html += '<span id="device-'+device.serial_number+'-water-text">'+device.interval+'</span>';
                     device_html += '</div>';
-                    device_html += '<select class="form-select py-1" id="device-'+device.serial_number+'-interval">';
+                    device_html += '<select class="form-select py-1 device-interval" id="device-'+device.serial_number+'-interval">';
                     device_html += '<option value="-1">Always Off</option>';
                     device_html += '<option value="0">Always On</option>';
                     device_html += '<option value="5">5 Detik</option>';
@@ -260,7 +284,7 @@
                     device_html += '</div>';
                     device_html += '</div>';
                     device_html += '<div class="d-flex justify-content-between p-2 border-top border-ni-ri">';
-                    device_html += '<button class="btn btn-primary py-1" id="device-'+device.serial_number+'-btn-edit">';
+                    device_html += '<button class="btn btn-primary py-1" id="device-'+device.serial_number+'-btn-edit" onclick="edit_device(\''+device.serial_number+'\')">';
                     device_html += '<i class="bi bi-pencil"></i> Edit';
                     device_html += '</button>';
                     device_html += '<button class="btn btn-danger py-1" id="device-'+device.serial_number+'-btn-delete" onclick="delete_device(\''+device.serial_number+'\')">';
@@ -302,6 +326,69 @@
             });
         }
     }
+
+    function edit_device(serial_number){
+        //open modal and set data
+        $('#update-serial_number').val(serial_number);
+        $('#update-name').val($('#device-'+serial_number+'-name').text());
+
+        $('#update-modal').modal('show');
+    }
+
+    //on btn update name click
+    $('#btn-update_name').click(function(){
+        var serial_number = $('#update-serial_number').val();
+        var name = $('#update-name').val();
+        $.ajax({
+            url: '/api/device/update',
+            type: 'POST',
+            data:{
+                serial_number: serial_number,
+                name: name
+            },
+            dataType: 'json',
+            success: function(data){
+                if(data.status == 'success'){
+                    alert('Perangkat berhasil diubah');
+
+                    //close modal and empty data
+                    $('#update-modal').modal('hide');
+                    $('#update-serial_number').val('');
+                    $('#update-name').val('');
+
+                    load_devices();
+                }
+                else{
+                    alert('Gagal mengubah perangkat');
+                }
+            }
+        });
+    });
+
+    //on select interval change of each device
+    $(document).on('change', '.device-interval', function(){
+        var serial_number = $(this).attr('id').split('-')[1];
+        var interval = $(this).val();
+        $.ajax({
+            url: '/api/device/update/interval',
+            type: 'POST',
+            data:{
+                serial_number: serial_number,
+                interval: interval
+            },
+            dataType: 'json',
+            success: function(data){
+                if(data.status == 'success'){
+                    alert('Perangkat berhasil diubah');
+                    load_devices();
+                }
+                else{
+                    alert('Gagal mengubah perangkat');
+                }
+            }
+        });
+    });
+
 </script>
 
 </html>

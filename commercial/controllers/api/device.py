@@ -41,3 +41,36 @@ def delete():
   else:
     return utils.reply('error', 'GIE-1', 'Error deleting device')
   
+
+@blueprint.route('/api/device/update', methods=['POST'])
+def update():
+  data = {
+    'serial_number': flask.request.form['serial_number'],
+    'name': flask.request.form['name']
+  }
+
+  for key in data:
+    if data[key] == '':
+      return utils.reply('error', 'GIE-1', 'Missing parameter: ' + key)
+
+  if device.update_by_serial_number(data):
+    return utils.reply('success', 'GIE-0', 'Device updated')
+  else:
+    return utils.reply('error', 'GIE-1', 'Error updating device')
+
+#interval update
+@blueprint.route('/api/device/update/interval', methods=['POST'])
+def update_interval():
+  data = {
+    'serial_number': flask.request.form['serial_number'],
+    'interval': flask.request.form['interval']
+  }
+
+  for key in data:
+    if data[key] == '':
+      return utils.reply('error', 'GIE-1', 'Missing parameter: ' + key)
+
+  if device.update_by_serial_number(data):
+    return utils.reply('success', 'GIE-0', 'Device updated')
+  else:
+    return utils.reply('error', 'GIE-1', 'Error updating device')

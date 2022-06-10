@@ -33,6 +33,19 @@ class device():
     query = table_device.update().where(table_device.c.id == data['id']).values(data)
     conn.execute(query)
     return True
+
+  def update_by_serial_number(data):
+    query = table_device.update().where(table_device.c.serial_number == data['serial_number']).values(data)
+    conn.execute(query)
+    return True
+
+  def get_interval_by_serial_number(serial_number):
+    query = table_device.select().where(table_device.c.serial_number == serial_number)
+    result = conn.execute(query).fetchone()
+    if result:
+      return result['interval']
+    else:
+      return False
   
   def delete(serial_number, user_id):
     #verify if the device is owned by the user
@@ -62,4 +75,3 @@ class device():
       }
       devices.append(device)
     return devices
-    return result

@@ -58,3 +58,12 @@ class user():
       return result
     else:
       return False
+
+  def verify_password(id, password):
+    password = utils.hash(password)
+    query = table_user.select().where(table_user.c.id == id).where(table_user.c.password == password)
+    result = conn.execute(query).fetchone()
+    if result is not None:
+      return result
+    else:
+      return False

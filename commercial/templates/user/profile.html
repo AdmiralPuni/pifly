@@ -31,43 +31,54 @@
                             <span class="fs-5">
                                 User Profile
                             </span>
-                            <button class="btn btn-primary py-1" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                <i class="bi bi-plus-circle"></i> Tambah
-                            </button>
+                            <a href="/auth/logout">
+                                <button class="btn btn-danger py-1">
+                                    Log Out
+                                </button>
+                            </a>
                         </div>
-                        <div class="d-block p-2 rounded-top border border-bottom-0 border-ni-ri fs-5">
-                            Data Diri
+                        <div class="d-block p-0 mb-3">
+                            <div class="d-block p-2 rounded-top border border-bottom-0 border-ni-ri fs-5">
+                                Data Diri
+                            </div>
+                            <div class="d-flex flex-column rounded-bottom border border-ni-ri p-2 mb-3">
+                                <div class="mb-3">
+                                    <label for="form-name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="form-name">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="form-email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="form-email">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="form-phone" class="form-label">No. Hp</label>
+                                    <input type="text" class="form-control" id="form-phone">
+                                </div>
+                                <button class="btn btn-success py-1 align-self-end" id="btn-data">
+                                    Update Data
+                                </button>
+                            </div>
                         </div>
-                        <div class="d-flex flex-column rounded-bottom border border-ni-ri p-2 mb-3">
-                            <div class="mb-3">
-                                <label for="form-name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="form-name">
+                        <div class="d-block p-0">
+                            <div class="d-block p-2 rounded-top border border-bottom-0 border-ni-ri fs-5">
+                                Ganti Password
                             </div>
-                            <div class="mb-3">
-                                <label for="form-email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="form-email">
-                            </div>
-                            <div class="mb-3">
-                                <label for="form-phone" class="form-label">No. Hp</label>
-                                <input type="text" class="form-control" id="form-phone">
-                            </div>
-                            <button class="btn btn-success py-1 align-self-end">
-                                Update Data
-                            </button>
-                        </div>
-                        <div class="d-block p-2 rounded-top border border-bottom-0 border-ni-ri fs-5">
-                            Opsi
-                        </div>
-                        <div class="row row-cols-2 row-cols-md-2 m-0 rounded-bottom border border-ni-ri p-2">
-                            <div class="col">
-                                Keluar dari website
-                            </div>
-                            <div class="col text-end">
-                                <a href="/auth/logout">
-                                    <button class="btn btn-danger py-1">
-                                        Log Out
-                                    </button>
-                                </a>
+                            <div class="d-flex flex-column rounded-bottom border border-ni-ri p-2 mb-3">
+                                <div class="mb-3">
+                                    <label for="form-old_password" class="form-label">Password Lama</label>
+                                    <input type="password" class="form-control" id="form-old_password">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="form-new_password" class="form-label">Password Baru</label>
+                                    <input type="password" class="form-control" id="form-new_password">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="form-new_password_retype" class="form-label">Ketik Ulang Password Baru</label>
+                                    <input type="password" class="form-control" id="form-new_password_retype">
+                                </div>
+                                <button class="btn btn-success py-1 align-self-end" id="btn-password">
+                                    Update Password
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -97,6 +108,65 @@
             }
         });
     }
+
+    //on btn data
+    $('#btn-data').click(function(){
+        var name = $('#form-name').val()
+        var email = $('#form-email').val()
+        var phone = $('#form-phone').val()
+
+        $.ajax({
+            url: '/api/user/update/data',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                name: name,
+                email: email,
+                phone: phone
+            },
+            success: function(data){
+                if(data.status == 'success'){
+                    alert('Data berhasil diupdate')
+                    //reload page
+                    location.reload()
+                }else{
+                    alert('Data gagal diupdate')
+                }
+            }
+        });
+    })
+
+    //on btn password
+    $('#btn-password').click(function(){
+        var old_password = $('#form-old_password').val()
+        var new_password = $('#form-new_password').val()
+        var new_password_retype = $('#form-new_password_retype').val()
+
+        //check new password match
+        if(new_password != new_password_retype){
+            alert('Password baru tidak sama')
+            return
+        }
+
+        $.ajax({
+            url: '/api/user/update/password',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                old_password: old_password,
+                new_password: new_password
+            },
+            success: function(data){
+                if(data.status == 'success'){
+                    alert('Password berhasil diupdate')
+                    //reload page
+                    location.reload()
+                }else{
+                    alert('Password gagal diupdate')
+                }
+            }
+        });
+    })
 </script>
 
 </html>
