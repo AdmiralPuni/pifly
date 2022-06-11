@@ -11,6 +11,8 @@ from controllers.api.user import blueprint as api_user_blueprint
 APP = Flask(__name__)
 APP.secret_key = 'DvS}4F/DE44nNK)shuZpB5.TEM~tYn'
 
+APP.errorhandler(403)(lambda e: render_template('error/403.html'))
+
 APP.register_blueprint(pages_blueprint)
 APP.register_blueprint(auth_blueprint)
 

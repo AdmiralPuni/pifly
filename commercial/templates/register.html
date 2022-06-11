@@ -61,6 +61,10 @@
                                 <label for="input-phone" class="form-label fs-5">No. Hp</label>
                                 <input type="text" class="form-control fs-5" id="input-phone" required>
                             </div>
+                            <div class="mb-2">
+                                <label for="input-code" class="form-label fs-5">Preview Code</label>
+                                <input type="text" class="form-control fs-5" id="input-code" required>
+                            </div>
                         </form>
                         <button class="btn btn-ni-kar fs-5 w-100 mt-auto" id="btn-register">
                             Daftar
@@ -90,6 +94,7 @@
             var email = $('#input-email').val();
             var password = $('#input-password').val();
             var phone = $('#input-phone').val();
+            var code = $('#input-code').val();
 
             //check if password match
             if (password != $('#input-password-repeat').val()) {
@@ -104,7 +109,8 @@
                     name: name,
                     email: email,
                     password: password,
-                    phone: phone
+                    phone: phone,
+                    code: code
                 },
                 dataType: 'json',
                 success: function(data) {

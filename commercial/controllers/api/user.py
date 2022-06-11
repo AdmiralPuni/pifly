@@ -1,11 +1,13 @@
 import flask
 from models.utils import utils
 from models.user import user
+from controllers.utils import utils as controller_utils
 
 blueprint = flask.Blueprint('api_user', __name__)
 
 @blueprint.route('/api/user/get', methods=['GET'])
 def get():
+  controller_utils.check_session()
   user_id = flask.session['user_id']
 
   user_data = user.single(user_id)
@@ -16,6 +18,7 @@ def get():
 
 @blueprint.route('/api/user/update/data', methods=['POST'])
 def update():
+  controller_utils.check_session()
   data = {
     'id': flask.session['user_id'],
     'name': flask.request.form['name'],
@@ -35,6 +38,7 @@ def update():
 
 @blueprint.route('/api/user/update/password', methods=['POST'])
 def update_password():
+  controller_utils.check_session()
   data = {
     'id': flask.session['user_id'],
     'old_password': flask.request.form['old_password'],

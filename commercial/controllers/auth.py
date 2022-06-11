@@ -1,7 +1,7 @@
 import flask
 from models.user import user
 from models.utils import utils
-
+from controllers.utils import utils as controller_utils
 
 blueprint = flask.Blueprint('auth_blueprint', __name__)
 
@@ -35,8 +35,12 @@ def register():
     'email': flask.request.form['email'],
     'password': flask.request.form['password'],
     'phone': flask.request.form['phone'],
-    'level': 10
+    'level': 10,
+    'code': flask.request.form['code']
   }
+
+  if data['code'] != '':
+    return utils.reply("error", "GIE-2", "Invalid code")
 
   for key in data:
     if data[key] == '':
@@ -58,6 +62,7 @@ def logout():
 
 @blueprint.route('/user/data', methods=['GET'])
 def get_user_data():
+  controller_utils.check_session()
   data = {
     'id': flask.session['user_id'],
     'name': flask.session['username']
