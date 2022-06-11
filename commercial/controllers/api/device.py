@@ -1,6 +1,12 @@
 import flask
 from models.utils import utils
 from models.device import device
+import paho.mqtt.client as mqtt
+
+def publish(client, topic, payload):
+  client.publish(topic, payload)
+
+client = mqtt.Client()
 
 blueprint = flask.Blueprint('api_device', __name__)
 
@@ -71,6 +77,8 @@ def update_interval():
       return utils.reply('error', 'GIE-1', 'Missing parameter: ' + key)
 
   if device.update_by_serial_number(data):
+    client.connect("broker.hivemq.com", 1883, 60)
+    publish(client, data['serial_number'] + "-INTERVAL", data['interval'])
     return utils.reply('success', 'GIE-0', 'Device updated')
   else:
     return utils.reply('error', 'GIE-1', 'Error updating device')

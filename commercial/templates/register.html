@@ -19,7 +19,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         body {
-            background-image: url('/static/images/placeholder-xp.png');
+            background-image: url('/static/images/auth-bg.jpg');
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -36,26 +36,30 @@
         <div class="p-2 ">
             <div class="d-flex justify-content-center">
                 <div class="d-flex flex-column shadow bg-white rounded" style="min-width: 20vw;">
-                    <span class="fs-2 p-2 bg-ni-kar text-white rounded-top w-100 text-center">
-                        Nofly
-                    </span>
+                    <a href="/" class="fs-2 p-2 bg-ni-kar text-white rounded-top w-100 text-center text-decoration-none">
+                        NoFly
+                    </a>
                     <div class="d-flex flex-column flex-fill p-4 rounded-bottom">
                         <form action="#">
                             <div class="mb-2">
                                 <label for="input-name" class="form-label fs-5">Nama</label>
-                                <input type="text" class="form-control fs-5" id="input-name">
+                                <input type="text" class="form-control fs-5" id="input-name" required>
                             </div>
                             <div class="mb-2">
                                 <label for="input-email" class="form-label fs-5">Email</label>
-                                <input type="email" class="form-control fs-5" id="input-email">
+                                <input type="email" class="form-control fs-5" id="input-email" required>
                             </div>
                             <div class="mb-2">
                                 <label for="input-password" class="form-label fs-5">Password</label>
-                                <input type="password" class="form-control fs-5" id="input-password">
+                                <input type="password" class="form-control fs-5" id="input-password" required>
+                            </div>
+                            <div class="mb-2">
+                                <label for="input-password-repeat" class="form-label fs-5">Ketik Ulang Password</label>
+                                <input type="password" class="form-control fs-5" id="input-password-repeat" required>
                             </div>
                             <div class="mb-2">
                                 <label for="input-phone" class="form-label fs-5">No. Hp</label>
-                                <input type="text" class="form-control fs-5" id="input-phone">
+                                <input type="text" class="form-control fs-5" id="input-phone" required>
                             </div>
                         </form>
                         <button class="btn btn-ni-kar fs-5 w-100 mt-auto" id="btn-register">
@@ -86,6 +90,12 @@
             var email = $('#input-email').val();
             var password = $('#input-password').val();
             var phone = $('#input-phone').val();
+
+            //check if password match
+            if (password != $('#input-password-repeat').val()) {
+                alert('Password tidak sama');
+                return;
+            }
 
             $.ajax({
                 url: '/auth/register',

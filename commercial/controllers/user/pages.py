@@ -17,3 +17,7 @@ def devices():
 @blueprint.route('/my/help', methods=['GET'])
 def help():
   return render_template('user/help.html')
+
+@blueprint.route('/my/about', methods=['GET'])
+def about():
+  return render_template('user/about.html')
