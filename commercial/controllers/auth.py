@@ -35,12 +35,13 @@ def register():
     'email': flask.request.form['email'],
     'password': flask.request.form['password'],
     'phone': flask.request.form['phone'],
-    'level': 10,
-    'code': flask.request.form['code']
+    'level': 10
   }
 
-  if data['code'] != '':
+  if flask.request.form['code'] != '':
     return utils.reply("error", "GIE-2", "Invalid code")
+
+
 
   for key in data:
     if data[key] == '':
