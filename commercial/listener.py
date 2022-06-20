@@ -50,7 +50,10 @@ def on_message(client, userdata, msg):
   elif topic == "NFFD-RADAR":
     topic = "radar"
   
-  device.update_by_serial_number({'serial_number': device_id, topic: float(payload)})
+  try:
+    device.update_by_serial_number({'serial_number': device_id, topic: float(payload)})
+  except:
+    print("FAILED TO UPDATE DEVICE " + device_id + " WITH " + topic + ": " + payload)
   
   
 client = mqtt.Client()
