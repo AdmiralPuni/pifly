@@ -33,8 +33,9 @@ def on_message(client, userdata, msg):
     publish(client, realmsg + "-INTERVAL", interval)
     return
   device_id, payload = realmsg.split(',')
-    
-    
+  
+  print("NEW MESSAGE FROM " + device_id + "==========================")
+  print("RAW DATA   : " + realmsg)
   print("DATETIME   :", datetime.datetime.now())
   print("TOPIC      :", topic)
   print("DEVICE_ID  :", device_id)
