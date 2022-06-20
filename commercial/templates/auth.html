@@ -71,13 +71,59 @@
             </div>
         </div>
     </div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-white">
+                <i class="bi fs-5 me-2" id="toast-color"></i>
+                <strong class="me-auto fs-5" id="toast-header">Bootstrap</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body bg-white" id="toast-body">
+                Hello, world! This is a toast message.
+            </div>
+        </div>
+    </div>
 </body>
 
 <script>
+    var toastLiveExample = document.getElementById('liveToast')
+    var toast = new bootstrap.Toast(toastLiveExample)
+
+    function show_toast(header, body) {
+        header = header.toUpperCase()
+        console.log(header + ' - ' + body);
+
+        $('#toast-header').html(header)
+        $('#toast-body').html(body)
+
+        //if SUCCESS is in header, remove text-mu-ma class add text-mu-ha
+        if (header.includes('SUCCESS')) {
+            $('#toast-color').removeClass('text-danger')
+            $('#toast-color').addClass('text-success')
+            //change icon to check
+            $('#toast-color').removeClass('bi-x-circle-fill')
+            $('#toast-color').addClass('bi-check-circle')
+        } else {
+            $('#toast-color').removeClass('text-success')
+            $('#toast-color').addClass('text-danger')
+            //change icon to x
+            $('#toast-color').removeClass('bi-check-circle')
+            $('#toast-color').addClass('bi-x-circle-fill')
+        }
+
+        toast.show()
+    }
+
     $(document).ready(function() {
         $('#btn-login').click(function() {
             var email = $('#input-email').val();
             var password = $('#input-password').val();
+
+            if(email == '' || password == '') {
+                show_toast('Error', 'Email dan Password tidak boleh kosong')
+                return
+            }
+
             $.ajax({
                 url: 'auth/verify',
                 type: 'POST',
@@ -87,10 +133,14 @@
                 },
                 dataType: 'json',
                 success: function(response) {
-                    alert(response.message);
-                    //redirect to dashboard
                     if (response.status == 'success') {
-                        window.location.href = '/my/dashboard';
+                            show_toast('SUCCESS', 'Login berhasil');
+                        setTimeout(function() {
+                            window.location.href = '/my/dashboard';
+                        }, 1500)
+                    }
+                    else {
+                        show_toast('ERROR', 'Password atau email salah');
                     }
                 }
             });
