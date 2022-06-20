@@ -19,6 +19,22 @@
 </head>
 
 <body class="bg-ni-sh" style="height:100vh;">
+    <div class="modal fade" id="notification-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Notifikasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="notification-modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog  modal-dialog-centered">
             <div class="modal-content">
@@ -120,6 +136,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="/static/js/user.js"></script>
 <script>
+    var first_load = true;
+
     var toastLiveExample = document.getElementById('liveToast')
     var toast = new bootstrap.Toast(toastLiveExample)
 
@@ -149,10 +167,11 @@
     }
 
     $(document).ready(function () {
-
+        
         //delay by 500ms before loading data
         setTimeout(function () {
             load_devices();
+            updater();
             setInterval(function () {
                 updater();
             }, 2000);
@@ -200,6 +219,10 @@
     function create_badge(color, text){
         return '<div class="badge bg-' + color + ' px-3 py-1 fs-6 fw-regular ms-1">' + text + '</div>'
     }
+t
+    function create_alert(color, name, text){
+        return '<div class="alert alert-' + color + ' fs-6 fw-bold mb-2">' + name + '<span class="float-end fw-normal">' + text + '</span></div>'
+    }
 
     function updater() {
         $.ajax({
@@ -207,6 +230,12 @@
             type: 'GET',
             dataType: 'json',
             success: function (data) {
+                if(first_load){
+                    
+                    //show notification modal use bootstrap modal
+                    $('#notification-modal').modal('show')
+                }
+
                 //console.log(data);
                 $.each(data.devices, function (index, device) {
                     //replace null with 0
@@ -244,11 +273,30 @@
                     $('#device-' + device.serial_number + '-notification').html(badge_html);
 
 
+                    if(first_load){
+                        //create same alert for all devices
+                        if (device.battery <= 20 && device.water <= 20) {
+                            $('#notification-modal-body').append(create_alert('danger', device.name, 'LOW BATTERY & WATER'))
+                        }
+                        else if (device.battery <= 20) {
+                            $('#notification-modal-body').append(create_alert('danger', device.name, 'LOW BATTERY'))
+                        }
+                        else if (device.water <= 20) {
+                            $('#notification-modal-body').append(create_alert('danger', device.name, 'LOW WATER'))
+                        }
+                        else{
+                            $('#notification-modal-body').append(create_alert('primary', device.name, 'NO PROBLEMS DETECTED'))
+                        }
+                    }
+
+
                     //update texts
                     $('#device-' + device.serial_number + '-battery-text').text(device.battery + '%');
                     $('#device-' + device.serial_number + '-water-text').text(device.water + '%');
                     $('#device-' + device.serial_number + '-interval-text').text(device.interval + ' detik');
                 });
+
+                first_load = false;
             }
         });
     }
