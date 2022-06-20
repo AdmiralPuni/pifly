@@ -4,7 +4,7 @@ blueprint = Blueprint('pages', __name__)
 
 @blueprint.route('/', methods=['GET'])
 def index():
-  return render_template('index.html')
+  return render_template('auth.html')
 
 @blueprint.route('/auth', methods=['GET'])
 def auth():

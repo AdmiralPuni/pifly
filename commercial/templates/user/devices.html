@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>NoFly</title>
+    <title>Device List | Nofly</title>
 
 
     <!-- CSS only -->
@@ -84,67 +84,14 @@
                             </button>
                         </div>
                         <div class="d-flex flex-column" id="device-container">
-                            <div class="w-100 border rounded border-ni-ri mb-3">
-                                <div class="d-flex justify-content-between p-2 border-bottom border-ni-ri">
-                                    <span class="fs-5 fw-bold" id="device-'+device.serial_number+'-name">
-                                        Perangkat 1
+                            <div class="d-block p-2">
+                                <div class="d-flex flex-column justify-content-center align-items-center border rounded py-3">
+                                    <div class="spinner-grow text-ni-kar" role="status" style="height: 4rem;width:4rem;">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <span class="fs-4 mt-2">
+                                        Memuat daftar perangkat...
                                     </span>
-                                    <span class="fs-5" id="device-'+device.serial_number+'-serial">
-                                        0329402348234
-                                    </span>
-                                </div>
-                                <div class="row row-cols-1 row-cols-md-3 m-0 p-2">
-                                    <div class="col ps-md-0 mb-2 mb-md-0">
-                                        <div class="d-flex justify-content-between fs-5">
-                                            <span>
-                                                Baterai
-                                            </span>
-                                            <span>
-                                                95%
-                                            </span>
-                                        </div>
-                                        <div class="progress">
-                                            <div class="progress-bar" role="progressbar" id="device-'+device.serial_number+'-battery" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col mb-2 mb-md-0">
-                                        <div class="d-flex justify-content-between fs-5">
-                                            <span>
-                                                Cairan
-                                            </span>
-                                            <span>
-                                                95%
-                                            </span>
-                                        </div>
-                                        <div class="progress">
-                                            <div class="progress-bar" role="progressbar" id="device-'+device.serial_number+'-water" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col pe-md-0 mb-2 mb-md-0">
-                                        <div class="d-flex justify-content-between fs-5">
-                                            <span>
-                                                Interval
-                                            </span>
-                                            <span>
-                                                95%
-                                            </span>
-                                        </div>
-                                        <select class="form-select py-1" id="device-'+device.serial_number+'-interval">
-                                            <option value="-1">Always Off</option>
-                                            <option value="0">Always On</option>
-                                            <option value="5">5 Detik</option>
-                                            <option value="15">15 Detik</option>
-                                            <option value="30">30 Detik</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between p-2 border-top border-ni-ri">
-                                    <button class="btn btn-primary py-1">
-                                        <i class="bi bi-info-circle"></i> Informasi
-                                    </button>
-                                    <button class="btn btn-danger py-1">
-                                        <i class="bi bi-x-circle"></i> Hapus
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -157,21 +104,67 @@
         </div>
         {% include('user/components/nav-mobile.html') %}
     </div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-white">
+                <i class="bi fs-5 me-2" id="toast-color"></i>
+                <strong class="me-auto fs-5" id="toast-header">Bootstrap</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body bg-white" id="toast-body">
+                Hello, world! This is a toast message.
+            </div>
+        </div>
+    </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="/static/js/user.js"></script>
 <script>
-    $(document).ready(function() {
-        load_devices();
+    var toastLiveExample = document.getElementById('liveToast')
+    var toast = new bootstrap.Toast(toastLiveExample)
 
-        setInterval(function() {
-            updater();
+    function show_toast(header, body) {
+        header = header.toUpperCase()
+        console.log(header + ' - ' + body);
+
+        $('#toast-header').html(header)
+        $('#toast-body').html(body)
+
+        //if SUCCESS is in header, remove text-mu-ma class add text-mu-ha
+        if (header.includes('SUCCESS')) {
+            $('#toast-color').removeClass('text-danger')
+            $('#toast-color').addClass('text-success')
+            //change icon to check
+            $('#toast-color').removeClass('bi-x-circle-fill')
+            $('#toast-color').addClass('bi-check-circle')
+        } else {
+            $('#toast-color').removeClass('text-success')
+            $('#toast-color').addClass('text-danger')
+            //change icon to x
+            $('#toast-color').removeClass('bi-check-circle')
+            $('#toast-color').addClass('bi-x-circle-fill')
+        }
+
+        toast.show()
+    }
+
+    $(document).ready(function () {
+
+        //delay by 500ms before loading data
+        setTimeout(function () {
+            load_devices();
+            setInterval(function () {
+                updater();
+            }, 2000);
         }, 1000);
+        
+
+        //show_toast("FAIL", "LOREM IPSUM DOLOR SIT AMET")
     });
 
 
     //on btn new device
-    $('#btn-new_device').click(function(){
+    $('#btn-new_device').click(function () {
         var serial_number = $('#form-serial_number').val();
         var name = $('#form-name').val();
         $.ajax({
@@ -182,9 +175,9 @@
                 name: name
             },
             dataType: 'json',
-            success: function(data){
+            success: function (data) {
                 console.log(data);
-                alert(data.message);
+                show_toast("SUCCESS", "Perangkat " + serial_number + " berhasil ditambahkan")
 
                 //empty and close modal
                 $('#form-serial_number').val('');
@@ -196,115 +189,138 @@
         });
     });
 
-    function updater(){
+    function change_color(id, color){
+        bootstrap_color_list = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark']
+        for (var i = 0; i < bootstrap_color_list.length; i++) {
+            $('#' + id).removeClass('bg-' + bootstrap_color_list[i])
+        }
+        $('#' + id).addClass('bg-' + color)
+    }
+
+    function create_badge(color, text){
+        return '<div class="badge bg-' + color + ' px-3 py-1 fs-6 fw-regular ms-1">' + text + '</div>'
+    }
+
+    function updater() {
         $.ajax({
             url: '/api/device/my',
             type: 'GET',
             dataType: 'json',
-            success: function(data){
+            success: function (data) {
                 //console.log(data);
-                $.each(data.devices, function(index, device){
-                    $('#device-'+device.serial_number+'-name').text(device.name);
-                    $('#device-'+device.serial_number+'-serial').text(device.serial_number);
-                    $('#device-'+device.serial_number+'-battery').css('width', device.battery+'%');
-                    $('#device-'+device.serial_number+'-water').css('width', device.water+'%');
-                    $('#device-'+device.serial_number+'-interval').val(device.interval);
-                    //if radar is null set to 0
-                    if(device.radar == null){
-                        device.radar = 0;
+                $.each(data.devices, function (index, device) {
+                    //replace null with 0
+                    for (var key in device) {
+                        if (device[key] == null) {
+                            device[key] = 0;
+                        }
                     }
-                    $('#device-'+device.serial_number+'-radar').html(device.radar);
+
+                    $('#device-' + device.serial_number + '-name').text(device.name);
+                    $('#device-' + device.serial_number + '-serial').text(device.serial_number);
+                    $('#device-' + device.serial_number + '-battery').css('width', device.battery + '%');
+                    $('#device-' + device.serial_number + '-water').css('width', device.water + '%');
+                    $('#device-' + device.serial_number + '-interval').val(device.interval);
+                    $('#device-' + device.serial_number + '-radar').html(device.radar);
+
+                    badge_html = "";
+                    $('#device-' + device.serial_number + '-notification').html("");
 
                     //notification
-                    if(device.battery <= 20 && device.water <= 20){
-                        $('#device-'+device.serial_number+'-notification').html('Low Battery & Water');
-                        //change bg from primary to danger
-                        $('#device-'+device.serial_number+'-notification').removeClass('bg-primary');
-                        $('#device-'+device.serial_number+'-notification').addClass('bg-danger');
-                    }else if(device.battery <= 20){
-                        $('#device-'+device.serial_number+'-notification').html('Low Battery');
-                        $('#device-'+device.serial_number+'-notification').removeClass('bg-primary');
-                        $('#device-'+device.serial_number+'-notification').addClass('bg-danger');
-                    }else if(device.water <= 20){
-                        $('#device-'+device.serial_number+'-notification').html('Low Water');
-                        $('#device-'+device.serial_number+'-notification').removeClass('bg-primary');
-                        $('#device-'+device.serial_number+'-notification').addClass('bg-danger');
-                    }else{
-                        $('#device-'+device.serial_number+'-notification').html('');
-                        $('#device-'+device.serial_number+'-notification').removeClass('bg-danger');
-                        $('#device-'+device.serial_number+'-notification').addClass('bg-primary');
+                    if (device.battery <= 20 && device.water <= 20) {
+                        badge_html += create_badge('danger', 'LOW BATTERY & WATER');
                     }
+                    else if (device.battery <= 20) {
+                        badge_html += create_badge('danger', 'LOW BATTERY');
+                    }
+                    else if (device.water <= 20) {
+                        badge_html += create_badge('danger', 'LOW WATER');
+                    }
+                    else{
+                        badge_html += create_badge('primary', 'NO PROBLEMS DETECTED');
+                    }
+
+                    //append badge
+                    $('#device-' + device.serial_number + '-notification').html(badge_html);
 
 
                     //update texts
-                    $('#device-'+device.serial_number+'-battery-text').text(device.battery+'%');
-                    $('#device-'+device.serial_number+'-water-text').text(device.water+'%');
-                    $('#device-'+device.serial_number+'-interval-text').text(device.interval+' detik');
+                    $('#device-' + device.serial_number + '-battery-text').text(device.battery + '%');
+                    $('#device-' + device.serial_number + '-water-text').text(device.water + '%');
+                    $('#device-' + device.serial_number + '-interval-text').text(device.interval + ' detik');
                 });
             }
         });
     }
 
-    function load_devices(){
+    function load_devices() {
         $.ajax({
             url: '/api/device/my',
             type: 'GET',
             dataType: 'json',
-            success: function(data){
+            success: function (data) {
                 var devices = data.devices;
                 var device_container = $('#device-container');
                 device_container.empty();
 
                 //if there is no device
-                if(devices.length == 0){
-                    device_container.append('<div class="col p-0">'+
-                        '<div class="card p-3">'+
-                            '<div class="text-center">'+
-                                '<h5 class="text-muted">Tidak ada perangkat</h5>'+
-                                '<p class="text-muted">Tambahkan perangkat baru dengan menekan tombol di bawah ini</p>'+
-                                '<button class="btn btn-primary" id="btn-new_device"  data-bs-toggle="modal" data-bs-target="#exampleModal">Tambahkan Perangkat</button>'+
-                            '</div>'+
-                        '</div>'+
-                    '</div>');
+                if (devices.length == 0) {
+                    device_container.append('<div class="col p-0">' +
+                        '<div class="card p-3">' +
+                        '<div class="text-center">' +
+                        '<h5 class="text-muted">Tidak ada perangkat</h5>' +
+                        '<p class="text-muted">Tambahkan perangkat baru dengan menekan tombol di bawah ini</p>' +
+                        '<button class="btn btn-primary" id="btn-new_device"  data-bs-toggle="modal" data-bs-target="#exampleModal">Tambahkan Perangkat</button>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>');
                     return;
                 }
-                
-                for(var i=0; i<devices.length; i++){
+
+                for (var i = 0; i < devices.length; i++) {
                     var device = devices[i];
+
+                    //change null to 0
+                    for (var key in device) {
+                        if (device[key] == null) {
+                            device[key] = 0;
+                        }
+                    }
+
                     var device_html = '<div class="w-100 border rounded border-ni-ri mb-3 bg-light">';
                     device_html += '<div class="d-flex justify-content-between align-items-center p-2 border-bottom border-ni-ri">';
-                    device_html += '<span class="fs-5 fw-bold" id="device-'+device.serial_number+'-name">'+device.name+'</span>';
-                    device_html += '<span class="fs-6" id="device-'+device.serial_number+'-serial">'+device.serial_number+'</span>';
+                    device_html += '<span class="fs-5 fw-bold" id="device-' + device.serial_number + '-name">' + device.name + '</span>';
+                    device_html += '<span class="fs-6" id="device-' + device.serial_number + '-serial">' + device.serial_number + '</span>';
                     device_html += '</div>';
                     device_html += '<div class="d-flex justify-content-between align-items-center p-2 border-bottom border-ni-ri">';
-                    device_html += '<div class="badge bg-primary px-3 py-1 fs-6 fw-regular" id="device-'+device.serial_number+'-radar">';
+                    device_html += '<div class="badge bg-primary px-3 py-1 fs-6 fw-regular" id="device-' + device.serial_number + '-radar">';
                     device_html += device.radar;
                     device_html += '</div>';
-                    device_html += '<div class="badge bg-primary px-3 py-1 fs-6 fw-regular" id="device-'+device.serial_number+'-notification">';
-                    device_html += '-';
+                    device_html += '<div class="d-flex justify-content-start align-items-center" id="device-' + device.serial_number + '-notification">';
+
                     device_html += '</div>';
                     device_html += '</div>';
                     device_html += '<div class="row row-cols-1 row-cols-md-3 m-0 p-2">';
                     device_html += '<div class="col ps-md-0 mb-2 mb-md-0">';
                     device_html += '<div class="d-flex justify-content-between fs-5">';
                     device_html += '<span>Baterai</span>';
-                    device_html += '<span id="device-'+device.serial_number+'-battery-text">'+device.battery+'%</span>';
+                    device_html += '<span id="device-' + device.serial_number + '-battery-text">' + device.battery + '%</span>';
                     device_html += '</div>';
                     device_html += '<div class="progress">';
-                    device_html += '<div class="progress-bar" role="progressbar" id="device-'+device.serial_number+'-battery" style="width: '+device.battery+'%" aria-valuenow="'+device.battery+'" aria-valuemin="0" aria-valuemax="100"></div>';
+                    device_html += '<div class="progress-bar" role="progressbar" id="device-' + device.serial_number + '-battery" style="width: ' + device.battery + '%" aria-valuenow="' + device.battery + '" aria-valuemin="0" aria-valuemax="100"></div>';
                     device_html += '</div>';
                     device_html += '</div>';
                     device_html += '<div class="col mb-2 mb-md-0">';
                     device_html += '<div class="d-flex justify-content-between fs-5">';
                     device_html += '<span>Cairan</span>';
-                    device_html += '<span id="device-'+device.serial_number+'-water-text">'+device.water+'%</span>';
+                    device_html += '<span id="device-' + device.serial_number + '-water-text">' + device.water + '%</span>';
                     device_html += '</div>';
                     device_html += '<div class="progress">';
-                    device_html += '<div class="progress-bar" role="progressbar" id="device-'+device.serial_number+'-water" style="width: '+device.water+'%" aria-valuenow="'+device.water+'" aria-valuemin="0" aria-valuemax="100"></div>';
+                    device_html += '<div class="progress-bar" role="progressbar" id="device-' + device.serial_number + '-water" style="width: ' + device.water + '%" aria-valuenow="' + device.water + '" aria-valuemin="0" aria-valuemax="100"></div>';
                     device_html += '</div>';
                     device_html += '</div>';
                     device_html += '<div class="col pe-md-0 mb-2 mb-md-0">';
-                    device_html += '<select class="form-select py-1 device-interval h-100" id="device-'+device.serial_number+'-interval">';
+                    device_html += '<select class="form-select py-1 device-interval h-100" id="device-' + device.serial_number + '-interval">';
                     device_html += '<option value="-1">Interval : Always Off</option>';
                     device_html += '<option value="0">Interval : Always On</option>';
                     device_html += '<option value="5">Interval : 5 Detik</option>';
@@ -314,10 +330,10 @@
                     device_html += '</div>';
                     device_html += '</div>';
                     device_html += '<div class="d-flex justify-content-between p-2 border-top border-ni-ri flex-wrap">';
-                    device_html += '<button class="btn btn-primary py-1" id="device-'+device.serial_number+'-btn-edit" onclick="edit_device(\''+device.serial_number+'\')">';
+                    device_html += '<button class="btn btn-primary py-1" id="device-' + device.serial_number + '-btn-edit" onclick="edit_device(\'' + device.serial_number + '\')">';
                     device_html += '<i class="bi bi-pencil"></i> Edit';
                     device_html += '</button>';
-                    device_html += '<button class="btn btn-danger py-1" id="device-'+device.serial_number+'-btn-delete" onclick="delete_device(\''+device.serial_number+'\')">';
+                    device_html += '<button class="btn btn-danger py-1" id="device-' + device.serial_number + '-btn-delete" onclick="delete_device(\'' + device.serial_number + '\')">';
                     device_html += '<i class="bi bi-trash"></i> Delete';
                     device_html += '</button>';
                     device_html += '</div>';
@@ -326,60 +342,60 @@
                     device_container.append(device_html);
 
                     //set select interval
-                    $('#device-'+device.serial_number+'-interval').val(device.interval);
+                    $('#device-' + device.serial_number + '-interval').val(device.interval);
 
                 }
             }
         });
     }
 
-    function delete_device(serial_number){
+    function delete_device(serial_number) {
         //confirm
         var r = confirm("Apakah anda yakin ingin menghapus perangkat ini?");
         if (r == true) {
             $.ajax({
                 url: '/api/device/delete',
                 type: 'POST',
-                data:{
+                data: {
                     serial_number: serial_number
                 },
                 dataType: 'json',
-                success: function(data){
-                    if(data.status == 'success'){
-                        alert('Perangkat berhasil dihapus');
+                success: function (data) {
+                    if (data.status == 'success') {
+                        show_toast('SUCCESS', 'Perangkat ' + serial_number + ' berhasil dihapus');
                         load_devices();
                     }
-                    else{
-                        alert('Gagal menghapus perangkat');
+                    else {
+                        show_toast('ERROR', 'Perangkat ' + serial_number + ' gagal dihapus');
                     }
                 }
             });
         }
     }
 
-    function edit_device(serial_number){
+    function edit_device(serial_number) {
         //open modal and set data
         $('#update-serial_number').val(serial_number);
-        $('#update-name').val($('#device-'+serial_number+'-name').text());
+        $('#update-name').val($('#device-' + serial_number + '-name').text());
 
         $('#update-modal').modal('show');
     }
 
     //on btn update name click
-    $('#btn-update_name').click(function(){
+    $('#btn-update_name').click(function () {
         var serial_number = $('#update-serial_number').val();
         var name = $('#update-name').val();
         $.ajax({
             url: '/api/device/update',
             type: 'POST',
-            data:{
+            data: {
                 serial_number: serial_number,
                 name: name
             },
             dataType: 'json',
-            success: function(data){
-                if(data.status == 'success'){
-                    alert('Perangkat berhasil diubah');
+            success: function (data) {
+                if (data.status == 'success') {
+                    show_toast("SUCCESS", "Perangkat " + serial_number + " berhasil diubah");
 
                     //close modal and empty data
                     $('#update-modal').modal('hide');
@@ -388,32 +404,32 @@
 
                     load_devices();
                 }
-                else{
-                    alert('Gagal mengubah perangkat');
+                else {
+                    show_toast("ERROR", "Gagal mengubah perangkat " + serial_number);
                 }
             }
         });
     });
 
     //on select interval change of each device
-    $(document).on('change', '.device-interval', function(){
+    $(document).on('change', '.device-interval', function () {
         var serial_number = $(this).attr('id').split('-')[1];
         var interval = $(this).val();
         $.ajax({
             url: '/api/device/update/interval',
             type: 'POST',
-            data:{
+            data: {
                 serial_number: serial_number,
                 interval: interval
             },
             dataType: 'json',
-            success: function(data){
-                if(data.status == 'success'){
-                    alert('Perangkat berhasil diubah');
-                    load_devices();
+            success: function (data) {
+                if (data.status == 'success') {
+                    show_toast("SUCCESS", "Interval berhasil diubah untuk perangkat " + serial_number);
+                    //load_devices();
                 }
-                else{
-                    alert('Gagal mengubah perangkat');
+                else {
+                    show_toast("ERROR", "Gagal mengubah interval perangkat " + serial_number);
                 }
             }
         });

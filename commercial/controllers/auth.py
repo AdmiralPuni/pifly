@@ -38,10 +38,8 @@ def register():
     'level': 10
   }
 
-  if flask.request.form['code'] != '':
-    return utils.reply("error", "GIE-2", "Invalid code")
-
-
+  #if flask.request.form['code'] != '':
+  #  return utils.reply("error", "GIE-2", "Invalid code")
 
   for key in data:
     if data[key] == '':
