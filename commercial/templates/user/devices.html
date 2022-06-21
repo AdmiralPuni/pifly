@@ -219,9 +219,18 @@
     function create_badge(color, text){
         return '<div class="badge bg-' + color + ' px-3 py-1 fs-6 fw-regular ms-1">' + text + '</div>'
     }
-t
+
     function create_alert(color, name, text){
         return '<div class="alert alert-' + color + ' fs-6 fw-bold mb-2">' + name + '<span class="float-end fw-normal">' + text + '</span></div>'
+    }
+
+    function radar_value_to_text(value){
+        if(value > 200){
+            return 'Meja Dipakai'
+        }
+        else{
+            return 'Meja Kosong'
+        }
     }
 
     function updater() {
@@ -250,7 +259,7 @@ t
                     $('#device-' + device.serial_number + '-battery').css('width', device.battery + '%');
                     $('#device-' + device.serial_number + '-water').css('width', device.water + '%');
                     $('#device-' + device.serial_number + '-interval').val(device.interval);
-                    $('#device-' + device.serial_number + '-radar').html(device.radar);
+                    $('#device-' + device.serial_number + '-radar').html(radar_value_to_text(device.radar));
 
                     badge_html = "";
                     $('#device-' + device.serial_number + '-notification').html("");

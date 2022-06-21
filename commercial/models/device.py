@@ -23,6 +23,14 @@ class device():
     query = table_device.select()
     result = conn.execute(query).fetchall()
     return result
+
+  def get_experiment():
+    EXPERIMENT_USER_EMAIL = 'exp@mail.com'
+    query = table_user.select().where(table_user.c.email == EXPERIMENT_USER_EMAIL)
+    user_id = conn.execute(query).fetchone()['id']
+    query = table_device.select().where(table_device.c.user_id == user_id)
+    result = conn.execute(query).fetchall()
+    return result
   
   def insert(data):
     query = table_device.insert().values(data)
