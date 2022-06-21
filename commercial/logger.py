@@ -11,7 +11,7 @@ FILE_PATH = "static/experiment/"
 if not os.path.isfile(FILE_PATH + FILE_NAME):
   with open(FILE_PATH + FILE_NAME, 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
-    writer.writerow(['serial_number', 'battery', 'water', 'radar', 'interval', 'timestamp'])
+    writer.writerow(['serial_number', 'name', 'battery', 'water', 'radar', 'interval', 'timestamp'])
 
 def log(data):
   #append data to csv file
@@ -28,7 +28,7 @@ def main():
       raw = device.get_experiment()
       for row in raw:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-        data.append([row['serial_number'], row['battery'], row['water'], row['radar'], row['interval'], timestamp])
+        data.append([row['serial_number'], row['name'], row['battery'], row['water'], row['radar'], row['interval'], timestamp])
       log(data)
     except Exception as e:
       print(e)
