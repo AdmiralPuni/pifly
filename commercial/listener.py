@@ -18,7 +18,7 @@ FILE_PATH = "static/experiment/"
 
 radar_treshold = 200
 
-TOPIC_LIST = ["NFFD-BATTERY", "NFFD-WATER", "NFFD-RADAR", "NFFD-INTERVAL-TRIGGER"]
+TOPIC_LIST = ["NFFD-BATTERY", "NFFD-WATER", "NFFD-RADAR", "NFFD-INTERVAL-TRIGGER", "NFFD-LATENCY"]
 db_field = ["battery", "water_level", "radar"]
 latency_csv = 'static/experiment/latency' + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + '.csv'
 
@@ -94,8 +94,14 @@ def on_message(client, userdata, msg):
     topic = "radar"
   elif topic == "NFFD-LATENCY":
     log_data = []
-    log_data.append([device_id, time.time() - float(payload), datetime.datetime.now()])
+    latency = time.time() - float(payload)
+    #conver to ms
+    latency = latency * 1000
+    #round to 3 decimal places
+    latency = round(latency, 3)
+    log_data.append([device_id, latency, datetime.datetime.now()])
     log(log_data)
+    return
 
     #find serial in radar_delay
     #if device_id in radar_trigger:

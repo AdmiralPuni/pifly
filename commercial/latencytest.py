@@ -44,14 +44,14 @@ def on_message(client, userdata, msg):
   print("TOPIC      :", topic)
   print("RAW DATA   :", realmsg)
   #time diff
-  time_diff = time.time() - float(realmsg)
+  time_diff = time.time() - float(realmsg.split(',')[-1])
   #convert unix time to ms
   time_diff = time_diff * 1000
   #round to 3 decimal places
   time_diff = round(time_diff, 3)
 
 
-  publish(client, "NFFD-LATENCY", topic.split('-')[-1] + ',' + realmsg)
+  publish(client, "NFFD-LATENCY",  realmsg)
 
   print("LATENCY    :", time_diff)
 
