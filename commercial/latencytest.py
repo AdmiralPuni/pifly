@@ -1,17 +1,21 @@
-import csv
-from models.device import device
+import paho.mqtt.client as mqtt
 import time
+import csv
 import datetime
 import os
 
-FILE_NAME = datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + ".csv"
+DEVICE_LIST = ['MONA', 'LISA', 'BOSSA', 'NOVA', 'TERRA', 'COTA']
+TOPIC_NAME = 'NFFD-LATENCY-'
+FILE_NAME = "LATENCY" + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + ".csv"
 FILE_PATH = "static/experiment/"
+
+latency_csv = 'static/experiment/latency' + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + '.csv'
 
 #if file does not exist, create it
 if not os.path.isfile(FILE_PATH + FILE_NAME):
   with open(FILE_PATH + FILE_NAME, 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
-    writer.writerow(['serial_number', 'name', 'battery', 'water', 'radar', 'interval', 'timestamp'])
+    writer.writerow(['serial_number', 'latency', 'timestamp'])
 
 def log(data):
   #append data to csv file
@@ -19,23 +23,50 @@ def log(data):
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-def main():
-  while True:
-    print("LOGGING DATA AT           " + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S"))
-    try:
-      data = []
-      raw = device.get_test_by_email('latency@gmail.com')
-      for row in raw:
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-        data.append([row['serial_number'], row['name'], row['battery'], row['water'], row['radar'], row['interval'], timestamp])
-      log(data)
-    except Exception as e:
-      print(e)
+def publish(client, topic, payload):
+  client.publish(topic, payload, qos=0)
 
-    print("COMPLETED LOGGING DATA AT " + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S"))
+# The callback for when the client receives a CONNACK response from the server.
+def on_connect(client, userdata, flags, rc):
+  #print("Connected with result code "+str(rc))
+  for device in DEVICE_LIST:
+    client.subscribe(TOPIC_NAME + device)
 
-    #wait for an hour
-    time.sleep(3600)
+# The callback for when a PUBLISH message is received from the server.
+def on_message(client, userdata, msg):
+  realmsg = str(msg.payload)[:-1]
+  realmsg = realmsg[2:]
+  topic = msg.topic
+  payload = realmsg.split(',')
 
-if __name__ == '__main__':
-  main()
+  #print
+  print("=====================================")
+  print("TOPIC      :", topic)
+  print("RAW DATA   :", realmsg)
+  #time diff
+  time_diff = time.time() - float(realmsg)
+  #convert unix time to ms
+  time_diff = time_diff * 1000
+  #round to 3 decimal places
+  time_diff = round(time_diff, 3)
+
+  print("LATENCY    :", time_diff)
+
+  #log to csv
+  log_data = []
+  log_data.append([topic.split('-')[-1], time_diff, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
+  log(log_data)
+  
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_message = on_message
+
+
+print('PiFly listerner started')
+
+client.connect("broker.hivemq.com", 1883, 60)
+#clear the buffer
+client.loop(2)
+
+
+client.loop_forever()
