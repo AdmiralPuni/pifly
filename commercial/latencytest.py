@@ -6,7 +6,7 @@ import os
 
 DEVICE_LIST = ['MONA', 'LISA', 'BOSSA', 'NOVA', 'TERRA', 'COTA']
 TOPIC_NAME = 'NFFD-LATENCY-'
-FILE_NAME = "LATENCY" + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + ".csv"
+FILE_NAME = "1WAYLATENCY" + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + ".csv"
 FILE_PATH = "static/experiment/"
 
 latency_csv = 'static/experiment/latency' + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + '.csv'
@@ -38,6 +38,7 @@ def on_message(client, userdata, msg):
   realmsg = realmsg[2:]
   topic = msg.topic
   payload = realmsg.split(',')
+  publish(client, "NFFD-LATENCY",  realmsg)
 
   #print
   print("=====================================")
@@ -51,7 +52,7 @@ def on_message(client, userdata, msg):
   time_diff = round(time_diff, 3)
 
 
-  publish(client, "NFFD-LATENCY",  realmsg)
+  
 
   print("LATENCY    :", time_diff)
 

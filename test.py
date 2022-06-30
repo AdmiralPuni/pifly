@@ -14,11 +14,14 @@ def publish(client, topic, payload):
 while True:
   for topic in TOPIC_LIST:
     for device in DEVICE_LIST:
+      print("Publishing to topic: " + topic + " device: " + device)
       payload = random.randint(0, 100)
       publish(client, topic, device + ',' +str(payload))
-      sleep(0.5)
+      sleep(3)
+    #randomly sleep between 1-3 seconds
+    sleep(5)
 
   #check for messages
-  client.loop(2)
+  #client.loop(2)
 
-  sleep(1)
+  sleep(5)

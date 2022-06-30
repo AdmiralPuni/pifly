@@ -83,10 +83,11 @@ def on_message(client, userdata, msg):
   #battery is bugged to 300%
 
   #publish latency test
-  publish(client, "NFFD-LATENCY-" + device_id, device_id + ',' + time.time())
+  
 
   #align topic with database field
   if topic == "NFFD-BATTERY":
+    publish(client, "NFFD-LATENCY-" + device_id, device_id + ',' + str(time.time()))
     topic = "battery"
   elif topic == "NFFD-WATER":
     topic = "water"
