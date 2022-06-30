@@ -22,10 +22,9 @@ def log(data):
 def main():
   while True:
     print("LOGGING DATA AT           " + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S"))
-
     try:
       data = []
-      raw = device.get_experiment()
+      raw = device.get_test_by_email('latency@gmail.com')
       for row in raw:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
         data.append([row['serial_number'], row['name'], row['battery'], row['water'], row['radar'], row['interval'], timestamp])

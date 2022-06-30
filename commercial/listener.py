@@ -20,7 +20,7 @@ radar_treshold = 200
 
 TOPIC_LIST = ["NFFD-BATTERY", "NFFD-WATER", "NFFD-RADAR", "NFFD-INTERVAL-TRIGGER"]
 db_field = ["battery", "water_level", "radar"]
-latency_csv = 'csv/csvlatency.csv'
+latency_csv = 'static/experiment/latency' + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + '.csv'
 
 #if file does not exist, create it
 if not os.path.isfile(FILE_PATH + FILE_NAME):
