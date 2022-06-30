@@ -28,7 +28,7 @@ const char* MQTT_DEVICE_ID = "NF7";
 const char* MQTT_DEVICE_INTERVAL = "NF7-INTERVAL";
 const char* MQTT_INTERVAL_TRIGGER = "NFFD-INTERVAL-TRIGGER";
 const char* MQTT_DEVICE_NAME = "NF7-ESP8266";
-const char* MQTT_TOPICS[5] = {"NFFD-WATER", "NFFD-BATTERY", "NFFD-RADAR", "", ""};
+const char* MQTT_TOPICS[5] = {"NFFD-WATER", "NFFD-BATTERY", "NFFD-RADAR", "NFFD-LATENCY-NF7", ""};
 
 WiFiClient espClient;
 PubSubClient client(espClient);

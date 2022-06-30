@@ -19,6 +19,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.println(interval);
     return;
   }
+  if(topic_converted == MQTT_TOPICS[3]){
+    //reply with same topic and payload
+    client.publish(MQTT_TOPICS[3], converted.c_str());
+  }
   Serial.println();
 }
 

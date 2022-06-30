@@ -13,11 +13,26 @@ radar_trigger = {
   #}
 }
 
+FILE_NAME = "LATENCY" + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + ".csv"
+FILE_PATH = "static/experiment/"
+
 radar_treshold = 200
 
 TOPIC_LIST = ["NFFD-BATTERY", "NFFD-WATER", "NFFD-RADAR", "NFFD-INTERVAL-TRIGGER"]
 db_field = ["battery", "water_level", "radar"]
 latency_csv = 'csv/csvlatency.csv'
+
+#if file does not exist, create it
+if not os.path.isfile(FILE_PATH + FILE_NAME):
+  with open(FILE_PATH + FILE_NAME, 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['serial_number', 'latency', 'timestamp'])
+
+def log(data):
+  #append data to csv file
+  with open(FILE_PATH + FILE_NAME, 'a', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerows(data)
 
 def check_treshold(old, new):
   if old > radar_trigger and new > radar_trigger:
@@ -62,6 +77,9 @@ def on_message(client, userdata, msg):
   print("PAYLOAD    :", float(payload))
   #battery is bugged to 300%
 
+  #publish latency test
+  publish(client, "NFFD-LATENCY-" + device_id, time.time())
+
   #align topic with database field
   if topic == "NFFD-BATTERY":
     topic = "battery"
@@ -69,6 +87,11 @@ def on_message(client, userdata, msg):
     topic = "water"
   elif topic == "NFFD-RADAR":
     topic = "radar"
+  elif topic == "NFFD-LATENCY-" + device_id:
+    log_data = []
+    log_data.append([device_id, time.time() - float(payload), datetime.datetime.now()])
+    log(log_data)
+
     #find serial in radar_delay
     #if device_id in radar_trigger:
     #  #check if update_trigger = 3

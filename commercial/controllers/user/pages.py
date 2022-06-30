@@ -27,3 +27,8 @@ def help():
 def about():
   controller_utils.check_session()
   return render_template('user/about.html')
+
+@blueprint.route('/my/settings', methods=['GET'])
+def settings():
+  controller_utils.check_session()
+  return render_template('user/settings.html')
