@@ -3,8 +3,16 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 #CSV_FILE = 'BBLATENCY2022-06-30T12-25-40.csv'
-CSV_FILE = '1WAYLATENCY2022-06-30T12-25-36.csv'
+CSV_FILE = 'SINGLE_SD_2022-06-30.csv'
 UNIQUE_NAMES = ['MONA', 'LISA', 'BOSSA', 'NOVA', 'TERRA', 'COTA']
+RENAMES = {
+  'MONA' : 'NF1',
+  'LISA' : 'NF2',
+  'BOSSA' : 'NF3',
+  'NOVA' : 'NF4',
+  'TERRA' : 'NF5',
+  'COTA' : 'NF6'
+}
 data = {}
 
 #init data
@@ -28,8 +36,7 @@ def plot_data():
     local_data[name] = data[name]
   #only get data 100-300
   for name in UNIQUE_NAMES:
-    local_data[name] = local_data[name][100:200]
-    plt.plot(local_data[name], label=name)
+    plt.plot(local_data[name], label=RENAMES[name])
   #plot data
   plt.legend()
   plt.show()
@@ -53,7 +60,7 @@ def main():
   print("{:<20}{:<20}{:<20}{:<20}{:<20}".format("Name", "Mean", "Std", "Min", "Max"))
 
   for name in UNIQUE_NAMES:
-    print("{:<20}".format(name), end='')
+    print("{:<20}".format(RENAMES[name]), end='')
     for key in stats[name]:
       print("{:<20}".format(stats[name][key]), end='')
     print()
