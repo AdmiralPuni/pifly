@@ -59,8 +59,8 @@ def on_connect(client, userdata, flags, rc):
   #print("Connected with result code "+str(rc))
   for topic in TOPIC_LIST:
     client.subscribe(topic)
-  for device in DEVICE_LIST:
-    client.subscribe(TOPIC_NAME + device)
+  #for device in DEVICE_LIST:
+    #client.subscribe(TOPIC_NAME + device)
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
@@ -83,7 +83,7 @@ def on_message(client, userdata, msg):
   #battery is bugged to 300%
 
   #publish latency test
-  publish(client, "NFFD-LATENCY-" + device_id, time.time())
+  publish(client, "NFFD-LATENCY-" + device_id, device_id + ',' + time.time())
 
   #align topic with database field
   if topic == "NFFD-BATTERY":
