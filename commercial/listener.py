@@ -13,7 +13,7 @@ radar_trigger = {
   #}
 }
 
-FILE_NAME = "LATENCY" + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + ".csv"
+FILE_NAME = "BBLATENCY" + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + ".csv"
 FILE_PATH = "static/experiment/"
 
 radar_treshold = 200
@@ -21,6 +21,9 @@ radar_treshold = 200
 TOPIC_LIST = ["NFFD-BATTERY", "NFFD-WATER", "NFFD-RADAR", "NFFD-INTERVAL-TRIGGER"]
 db_field = ["battery", "water_level", "radar"]
 latency_csv = 'static/experiment/latency' + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S") + '.csv'
+
+DEVICE_LIST = ['MONA', 'LISA', 'BOSSA', 'NOVA', 'TERRA', 'COTA']
+TOPIC_NAME = 'NFFD-LATENCY-'
 
 #if file does not exist, create it
 if not os.path.isfile(FILE_PATH + FILE_NAME):
@@ -56,6 +59,8 @@ def on_connect(client, userdata, flags, rc):
   #print("Connected with result code "+str(rc))
   for topic in TOPIC_LIST:
     client.subscribe(topic)
+  for device in DEVICE_LIST:
+    client.subscribe(TOPIC_NAME + device)
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
@@ -87,7 +92,7 @@ def on_message(client, userdata, msg):
     topic = "water"
   elif topic == "NFFD-RADAR":
     topic = "radar"
-  elif topic == "NFFD-LATENCY-" + device_id:
+  elif topic == "NFFD-LATENCY":
     log_data = []
     log_data.append([device_id, time.time() - float(payload), datetime.datetime.now()])
     log(log_data)

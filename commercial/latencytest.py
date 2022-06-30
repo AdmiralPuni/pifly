@@ -50,12 +50,17 @@ def on_message(client, userdata, msg):
   #round to 3 decimal places
   time_diff = round(time_diff, 3)
 
+
+  publish(client, "NFFD-LATENCY", topic.split('-')[-1] + ',' + realmsg)
+
   print("LATENCY    :", time_diff)
 
   #log to csv
   log_data = []
   log_data.append([topic.split('-')[-1], time_diff, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
   log(log_data)
+
+  #bounce back to device
   
 client = mqtt.Client()
 client.on_connect = on_connect
